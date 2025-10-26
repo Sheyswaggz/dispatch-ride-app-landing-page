@@ -1,43 +1,11 @@
-/**
- * Main Stylesheet
- * 
- * Central import file that orchestrates all CSS modules in proper cascade order.
- * Follows a layered architecture for maintainability and performance.
- * 
- * Import Order:
- * 1. Reset - Normalize browser defaults
- * 2. Variables - Design tokens and CSS custom properties
- * 3. Base - Typography, global elements
- * 4. Layout - Grid systems, containers
- * 5. Components - Reusable UI components
- */
+/* Main Stylesheet - Dispatch Ride Landing Page */
 
-/* ============================================
-   FOUNDATION LAYER
-   ============================================ */
-
-/* CSS Reset - Normalize browser inconsistencies */
+/* Import order: Reset → Variables → Base → Layout → Components → Utilities */
 @import './reset.css';
-
-/* Design Tokens - CSS custom properties for theming */
 @import './variables.css';
-
-/* Base Styles - Typography, global element styles */
 @import './base.css';
-
-/* ============================================
-   LAYOUT LAYER
-   ============================================ */
-
-/* Layout Systems - Grid, containers, spacing utilities */
 @import './layout.css';
-
-/* ============================================
-   COMPONENT LAYER
-   ============================================ */
-
-/* Hero Section - App showcase and download CTAs */
-@import './components/hero.css';
-
-/* Button Components - Reusable button styles */
 @import './components/buttons.css';
+@import './components/hero.css';
+@import './components/features.css';
+@import './utilities/animations.css';
