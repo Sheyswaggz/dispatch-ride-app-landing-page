@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import viteImagemin from 'vite-plugin-imagemin';
 
 // ESM __dirname polyfill
 const __filename = fileURLToPath(import.meta.url);
@@ -129,7 +130,39 @@ export default defineConfig(({ _command, mode }) => {
     },
 
     // Plugin configuration
-    plugins: [],
+    plugins: [
+      isProduction && viteImagemin({
+        gifsicle: {
+          optimizationLevel: 7,
+          interlaced: false,
+        },
+        optipng: {
+          optimizationLevel: 7,
+        },
+        mozjpeg: {
+          quality: 90,
+        },
+        pngquant: {
+          quality: [0.8, 0.9],
+          speed: 4,
+        },
+        svgo: {
+          plugins: [
+            {
+              name: 'removeViewBox',
+              active: false,
+            },
+            {
+              name: 'removeEmptyAttrs',
+              active: true,
+            },
+          ],
+        },
+        webp: {
+          quality: 80,
+        },
+      }),
+    ].filter(Boolean),
 
     // Environment variables prefix
     envPrefix: 'VITE_',
