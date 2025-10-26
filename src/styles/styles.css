@@ -1,405 +1,43 @@
-/* src/styles/styles.css */
-
 /**
- * Main Stylesheet Entry Point
+ * Main Stylesheet
  * 
- * This file serves as the single entry point for all application styles.
- * It imports CSS modules in the correct order to ensure proper cascade
- * and specificity management.
+ * Central import file that orchestrates all CSS modules in proper cascade order.
+ * Follows a layered architecture for maintainability and performance.
  * 
  * Import Order:
- * 1. reset.css     - Normalize browser defaults and reset inconsistencies
- * 2. variables.css - Design tokens and CSS custom properties
- * 3. base.css      - Base typography and global element styles
- * 4. layout.css    - Layout utilities and container systems
- * 
- * This modular approach provides:
- * - Clear separation of concerns
- * - Easy maintenance and updates
- * - Predictable cascade behavior
- * - Reusable design system
+ * 1. Reset - Normalize browser defaults
+ * 2. Variables - Design tokens and CSS custom properties
+ * 3. Base - Typography, global elements
+ * 4. Layout - Grid systems, containers
+ * 5. Components - Reusable UI components
  */
 
 /* ============================================
-   RESET AND NORMALIZATION
-   ============================================
-   
-   Import browser reset first to establish a
-   consistent baseline across all browsers.
-   This removes default margins, paddings, and
-   inconsistent styling.
-*/
-@import url('./reset.css');
+   FOUNDATION LAYER
+   ============================================ */
+
+/* CSS Reset - Normalize browser inconsistencies */
+@import './reset.css';
+
+/* Design Tokens - CSS custom properties for theming */
+@import './variables.css';
+
+/* Base Styles - Typography, global element styles */
+@import './base.css';
 
 /* ============================================
-   DESIGN TOKENS
-   ============================================
-   
-   Import CSS custom properties (variables) that
-   define the design system. These tokens are used
-   throughout all other stylesheets for consistency.
-   
-   Includes:
-   - Color palette
-   - Typography scale
-   - Spacing system
-   - Breakpoints
-   - Effects (shadows, transitions)
-*/
-@import url('./variables.css');
+   LAYOUT LAYER
+   ============================================ */
+
+/* Layout Systems - Grid, containers, spacing utilities */
+@import './layout.css';
 
 /* ============================================
-   BASE STYLES
-   ============================================
-   
-   Import base typography and global element styles.
-   These styles apply design tokens to HTML elements
-   and establish the foundational look and feel.
-   
-   Includes:
-   - Body and root styles
-   - Heading hierarchy
-   - Paragraph and text elements
-   - Link styles
-   - List styles
-*/
-@import url('./base.css');
+   COMPONENT LAYER
+   ============================================ */
 
-/* ============================================
-   LAYOUT UTILITIES
-   ============================================
-   
-   Import layout utilities and container systems.
-   These provide reusable classes for page structure
-   and responsive design patterns.
-   
-   Includes:
-   - Container system
-   - Grid utilities
-   - Flexbox utilities
-   - Section spacing
-   - Responsive visibility helpers
-*/
-@import url('./layout.css');
+/* Hero Section - App showcase and download CTAs */
+@import './components/hero.css';
 
-/* ============================================
-   GLOBAL UTILITY CLASSES
-   ============================================
-   
-   Additional utility classes that don't fit into
-   other modules but are useful across the application.
-*/
-
-/* Visually hidden but accessible to screen readers */
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-
-/* Remove visually hidden when focused (for skip links) */
-.visually-hidden:focus {
-  position: static;
-  width: auto;
-  height: auto;
-  padding: inherit;
-  margin: inherit;
-  overflow: visible;
-  clip: auto;
-  white-space: normal;
-}
-
-/* Clearfix for float-based layouts (legacy support) */
-.clearfix::after {
-  content: '';
-  display: table;
-  clear: both;
-}
-
-/* Prevent text selection (use sparingly) */
-.no-select {
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-}
-
-/* Force text wrapping */
-.break-word {
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-word;
-  hyphens: auto;
-}
-
-/* Truncate text with ellipsis */
-.truncate {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Multi-line truncation (webkit only) */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* ============================================
-   PRINT OPTIMIZATION
-   ============================================
-   
-   Ensure proper rendering when printing pages.
-*/
-@media print {
-  /* Hide non-essential elements when printing */
-  .no-print {
-    display: none !important;
-  }
-  
-  /* Ensure links are visible in print */
-  a[href^="http"]::after {
-    content: " (" attr(href) ")";
-    font-size: 0.875em;
-    color: var(--color-text-secondary);
-  }
-  
-  /* Prevent page breaks inside important elements */
-  .keep-together {
-    page-break-inside: avoid;
-    break-inside: avoid;
-  }
-}
-
-/* ============================================
-   PERFORMANCE OPTIMIZATIONS
-   ============================================
-   
-   CSS containment for better rendering performance.
-*/
-
-/* Contain layout and paint for independent components */
-.component-container {
-  contain: layout style paint;
-}
-
-/* Content visibility for off-screen content */
-.lazy-content {
-  content-visibility: auto;
-  contain-intrinsic-size: 0 500px;
-}
-
-/* ============================================
-   ACCESSIBILITY ENHANCEMENTS
-   ============================================
-   
-   Additional accessibility improvements beyond
-   what's in base.css.
-*/
-
-/* Focus visible indicator for all interactive elements */
-:focus-visible {
-  outline: 2px solid var(--color-border-focus);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
-/* Remove focus outline for mouse users */
-:focus:not(:focus-visible) {
-  outline: none;
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  * {
-    border-color: currentColor !important;
-  }
-  
-  button,
-  a {
-    text-decoration: underline;
-  }
-}
-
-/* Reduced motion support */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* ============================================
-   DARK MODE SUPPORT
-   ============================================
-   
-   Additional dark mode adjustments beyond
-   what's defined in variables.css.
-*/
-@media (prefers-color-scheme: dark) {
-  /* Reduce image brightness in dark mode */
-  img:not([class*="no-dark-filter"]) {
-    opacity: 0.9;
-  }
-  
-  /* Invert certain UI elements if needed */
-  .invert-dark {
-    filter: invert(1) hue-rotate(180deg);
-  }
-}
-
-/* ============================================
-   RESPONSIVE IMAGES
-   ============================================
-   
-   Ensure images are responsive by default.
-*/
-img,
-picture,
-video,
-canvas,
-svg {
-  display: block;
-  max-width: 100%;
-  height: auto;
-}
-
-/* Maintain aspect ratio for media elements */
-img[width][height] {
-  height: auto;
-}
-
-/* ============================================
-   SMOOTH SCROLLING
-   ============================================
-   
-   Enable smooth scrolling for anchor links
-   (respects prefers-reduced-motion).
-*/
-html {
-  scroll-behavior: smooth;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-}
-
-/* ============================================
-   LOADING STATES
-   ============================================
-   
-   Utility classes for loading indicators.
-*/
-.loading {
-  position: relative;
-  pointer-events: none;
-  opacity: 0.6;
-}
-
-.loading::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--color-surface-overlay);
-  display: grid;
-  place-items: center;
-}
-
-/* ============================================
-   ERROR STATES
-   ============================================
-   
-   Utility classes for error indication.
-*/
-.error-state {
-  border-color: var(--color-error) !important;
-  background-color: var(--color-error-light);
-}
-
-.error-message {
-  color: var(--color-error-dark);
-  font-size: var(--font-size-sm);
-  margin-block-start: var(--space-2);
-}
-
-/* ============================================
-   SUCCESS STATES
-   ============================================
-   
-   Utility classes for success indication.
-*/
-.success-state {
-  border-color: var(--color-success) !important;
-  background-color: var(--color-success-light);
-}
-
-.success-message {
-  color: var(--color-success-dark);
-  font-size: var(--font-size-sm);
-  margin-block-start: var(--space-2);
-}
-
-/* ============================================
-   DISABLED STATES
-   ============================================
-   
-   Consistent disabled state styling.
-*/
-[disabled],
-.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-/* ============================================
-   BROWSER-SPECIFIC FIXES
-   ============================================
-   
-   Handle browser-specific quirks and bugs.
-*/
-
-/* Fix for iOS Safari viewport height issue */
-@supports (-webkit-touch-callout: none) {
-  .full-height {
-    min-height: -webkit-fill-available;
-  }
-}
-
-/* Fix for Firefox button padding */
-@-moz-document url-prefix() {
-  button::-moz-focus-inner {
-    border: 0;
-    padding: 0;
-  }
-}
-
-/* ============================================
-   END OF MAIN STYLESHEET
-   ============================================
-   
-   All styles are now loaded and ready for use.
-   Component-specific styles should be added in
-   separate files and imported as needed.
-*/
+/* Button Components - Reusable button styles */
+@import './components/buttons.css';
