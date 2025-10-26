@@ -1,0 +1,567 @@
+/**
+ * Button Component Styles
+ * 
+ * Reusable button components for CTAs, download buttons, and interactive elements.
+ * Implements accessible, themeable buttons with proper states and platform-specific styling.
+ * 
+ * Architecture:
+ * - Base .btn class with core button styles
+ * - Modifier classes for variants (.btn--primary, .btn--app-store, .btn--google-play)
+ * - State styles (hover, focus, active, disabled)
+ * - Responsive sizing and touch-friendly targets
+ * - CSS custom properties for theming
+ * 
+ * Accessibility:
+ * - WCAG 2.1 AA contrast ratios (4.5:1 for normal text, 3:1 for large text)
+ * - Visible focus indicators for keyboard navigation
+ * - Minimum touch target size of 44x44px (WCAG 2.5.5)
+ * - Reduced motion support
+ * 
+ * Performance:
+ * - Hardware-accelerated transforms
+ * - Efficient CSS containment
+ * - Optimized repaints with will-change hints
+ */
+
+/* ============================================
+   BASE BUTTON STYLES
+   ============================================ */
+
+.btn {
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  
+  /* Sizing - Ensure minimum touch target */
+  min-height: 44px;
+  min-width: 44px;
+  padding: var(--button-padding-base);
+  
+  /* Typography */
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  
+  /* Visual */
+  border: 2px solid transparent;
+  border-radius: var(--button-radius);
+  background-color: var(--color-neutral-200);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  
+  /* Effects */
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  
+  /* Performance */
+  contain: layout style paint;
+  will-change: transform, box-shadow;
+}
+
+/* Remove default button styles */
+.btn::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+/* Icon sizing within buttons */
+.btn svg,
+.btn img {
+  width: 1.25em;
+  height: 1.25em;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   BUTTON STATES
+   ============================================ */
+
+/* Hover state */
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+  background-color: var(--color-neutral-300);
+}
+
+/* Focus state - Visible keyboard navigation indicator */
+.btn:focus {
+  outline: none;
+}
+
+.btn:focus-visible {
+  outline: 3px solid var(--color-border-focus);
+  outline-offset: 2px;
+  box-shadow: var(--shadow-focus);
+}
+
+/* Active/pressed state */
+.btn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-xs);
+  transition-duration: 50ms;
+}
+
+/* Disabled state */
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: var(--opacity-50);
+  cursor: not-allowed;
+  pointer-events: none;
+  box-shadow: none;
+  transform: none;
+}
+
+/* ============================================
+   PRIMARY BUTTON VARIANT
+   ============================================ */
+
+.btn--primary {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-500) 0%,
+    var(--color-primary-600) 100%
+  );
+  color: var(--color-text-inverse);
+  border-color: var(--color-primary-600);
+  box-shadow: var(--shadow-base);
+}
+
+.btn--primary:hover {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-600) 0%,
+    var(--color-primary-700) 100%
+  );
+  border-color: var(--color-primary-700);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn--primary:focus-visible {
+  outline-color: var(--color-primary-300);
+  box-shadow: 0 0 0 4px rgba(66, 153, 225, 0.3);
+}
+
+.btn--primary:active {
+  background: var(--color-primary-700);
+  box-shadow: var(--shadow-sm);
+}
+
+/* High contrast mode adjustments */
+@media (prefers-contrast: high) {
+  .btn--primary {
+    border-width: 3px;
+    border-color: var(--color-primary-900);
+  }
+}
+
+/* ============================================
+   APP STORE BUTTON VARIANT
+   ============================================ */
+
+.btn--app-store {
+  /* iOS App Store brand colors */
+  background: linear-gradient(
+    135deg,
+    hsl(210, 100%, 12%) 0%,
+    hsl(210, 100%, 8%) 100%
+  );
+  color: var(--color-neutral-0);
+  border-color: hsl(210, 100%, 6%);
+  padding: var(--space-3) var(--space-6);
+  min-width: 160px;
+  box-shadow: var(--shadow-base);
+}
+
+.btn--app-store:hover {
+  background: linear-gradient(
+    135deg,
+    hsl(210, 100%, 16%) 0%,
+    hsl(210, 100%, 12%) 100%
+  );
+  border-color: hsl(210, 100%, 10%);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn--app-store:focus-visible {
+  outline-color: hsl(210, 100%, 60%);
+  box-shadow: 0 0 0 4px hsla(210, 100%, 60%, 0.3);
+}
+
+.btn--app-store:active {
+  background: hsl(210, 100%, 6%);
+  box-shadow: var(--shadow-sm);
+}
+
+/* App Store badge icon styling */
+.btn--app-store svg,
+.btn--app-store img {
+  width: 1.5em;
+  height: 1.5em;
+  margin-inline-end: var(--space-2);
+}
+
+/* App Store text layout */
+.btn--app-store .btn__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  text-align: left;
+}
+
+.btn--app-store .btn__text-small {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-normal);
+  opacity: var(--opacity-80);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.btn--app-store .btn__text-large {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+
+/* ============================================
+   GOOGLE PLAY BUTTON VARIANT
+   ============================================ */
+
+.btn--google-play {
+  /* Google Play brand colors */
+  background: linear-gradient(
+    135deg,
+    hsl(0, 0%, 12%) 0%,
+    hsl(0, 0%, 8%) 100%
+  );
+  color: var(--color-neutral-0);
+  border-color: hsl(0, 0%, 6%);
+  padding: var(--space-3) var(--space-6);
+  min-width: 160px;
+  box-shadow: var(--shadow-base);
+}
+
+.btn--google-play:hover {
+  background: linear-gradient(
+    135deg,
+    hsl(0, 0%, 16%) 0%,
+    hsl(0, 0%, 12%) 100%
+  );
+  border-color: hsl(0, 0%, 10%);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn--google-play:focus-visible {
+  outline-color: hsl(142, 76%, 50%);
+  box-shadow: 0 0 0 4px hsla(142, 76%, 50%, 0.3);
+}
+
+.btn--google-play:active {
+  background: hsl(0, 0%, 6%);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Google Play badge icon styling */
+.btn--google-play svg,
+.btn--google-play img {
+  width: 1.5em;
+  height: 1.5em;
+  margin-inline-end: var(--space-2);
+}
+
+/* Google Play text layout */
+.btn--google-play .btn__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  text-align: left;
+}
+
+.btn--google-play .btn__text-small {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-normal);
+  opacity: var(--opacity-80);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.btn--google-play .btn__text-large {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+}
+
+/* ============================================
+   BUTTON SIZE VARIANTS
+   ============================================ */
+
+.btn--small {
+  min-height: 36px;
+  padding: var(--button-padding-sm);
+  font-size: var(--font-size-sm);
+}
+
+.btn--large {
+  min-height: 52px;
+  padding: var(--button-padding-lg);
+  font-size: var(--font-size-lg);
+}
+
+/* ============================================
+   BUTTON LAYOUT VARIANTS
+   ============================================ */
+
+/* Full width button */
+.btn--full-width {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Icon-only button */
+.btn--icon-only {
+  padding: var(--space-3);
+  min-width: 44px;
+  aspect-ratio: 1;
+}
+
+.btn--icon-only svg,
+.btn--icon-only img {
+  margin: 0;
+}
+
+/* Button group */
+.btn-group {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.btn-group--vertical {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.btn-group--vertical .btn {
+  width: 100%;
+}
+
+/* ============================================
+   LOADING STATE
+   ============================================ */
+
+.btn--loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.btn--loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: inherit;
+  border-radius: inherit;
+}
+
+.btn--loading::before {
+  content: '';
+  position: absolute;
+  width: 1.25em;
+  height: 1.25em;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: btn-spin 0.6s linear infinite;
+  z-index: 1;
+}
+
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+/* Mobile optimizations */
+@media (max-width: 767px) {
+  .btn {
+    /* Larger touch targets on mobile */
+    min-height: 48px;
+    padding: var(--space-3) var(--space-5);
+  }
+  
+  .btn--app-store,
+  .btn--google-play {
+    min-width: 140px;
+    padding: var(--space-3) var(--space-5);
+  }
+  
+  .btn--app-store .btn__text-large,
+  .btn--google-play .btn__text-large {
+    font-size: var(--font-size-base);
+  }
+  
+  /* Stack button groups on mobile */
+  .btn-group {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .btn-group .btn {
+    width: 100%;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .btn--app-store,
+  .btn--google-play {
+    min-width: 150px;
+  }
+}
+
+/* Desktop enhancements */
+@media (min-width: 1024px) {
+  .btn {
+    /* Subtle hover lift on desktop */
+    transition: transform var(--transition-fast),
+                box-shadow var(--transition-fast),
+                background-color var(--transition-base);
+  }
+  
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+  
+  .btn--app-store,
+  .btn--google-play {
+    min-width: 180px;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY ENHANCEMENTS
+   ============================================ */
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .btn::before,
+  .btn::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .btn:hover {
+    transform: none;
+  }
+  
+  .btn:active {
+    transform: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .btn {
+    border-width: 3px;
+  }
+  
+  .btn:focus-visible {
+    outline-width: 4px;
+    outline-offset: 3px;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .btn {
+    background-color: var(--color-neutral-700);
+    color: var(--color-text-inverse);
+    border-color: var(--color-neutral-600);
+  }
+  
+  .btn:hover {
+    background-color: var(--color-neutral-600);
+    border-color: var(--color-neutral-500);
+  }
+  
+  .btn--app-store {
+    background: linear-gradient(
+      135deg,
+      hsl(210, 100%, 20%) 0%,
+      hsl(210, 100%, 16%) 100%
+    );
+    border-color: hsl(210, 100%, 14%);
+  }
+  
+  .btn--app-store:hover {
+    background: linear-gradient(
+      135deg,
+      hsl(210, 100%, 24%) 0%,
+      hsl(210, 100%, 20%) 100%
+    );
+  }
+  
+  .btn--google-play {
+    background: linear-gradient(
+      135deg,
+      hsl(0, 0%, 20%) 0%,
+      hsl(0, 0%, 16%) 100%
+    );
+    border-color: hsl(0, 0%, 14%);
+  }
+  
+  .btn--google-play:hover {
+    background: linear-gradient(
+      135deg,
+      hsl(0, 0%, 24%) 0%,
+      hsl(0, 0%, 20%) 100%
+    );
+  }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+  .btn {
+    /* Simplify buttons for print */
+    background: transparent !important;
+    color: var(--color-text-primary) !important;
+    border: 2px solid var(--color-text-primary) !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+  
+  .btn::before,
+  .btn::after {
+    display: none !important;
+  }
+  
+  /* Show URLs for download buttons */
+  .btn--app-store::after,
+  .btn--google-play::after {
+    content: " (" attr(href) ")";
+    font-size: var(--font-size-xs);
+    display: block;
+    margin-top: var(--space-1);
+  }
+}
