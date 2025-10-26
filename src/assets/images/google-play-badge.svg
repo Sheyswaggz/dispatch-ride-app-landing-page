@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 155 60" width="155" height="60">
+  <defs>
+    <linearGradient id="google-play-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00D4FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0095FF;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="155" height="60" rx="5" fill="#000000"/>
+  
+  <!-- Google Play Icon -->
+  <g transform="translate(12, 12)">
+    <!-- Play icon triangle parts -->
+    <path d="M2 2 L2 34 L20 18 Z" fill="#00D4FF" opacity="0.9"/>
+    <path d="M2 2 L20 18 L26 14 L6 2 Z" fill="#FFD500" opacity="0.9"/>
+    <path d="M2 34 L20 18 L26 22 L6 34 Z" fill="#FF3A44" opacity="0.9"/>
+    <path d="M20 18 L26 14 L26 22 Z" fill="#00F076" opacity="0.9"/>
+  </g>
+  
+  <!-- Text Content -->
+  <g transform="translate(48, 0)">
+    <!-- "GET IT ON" text -->
+    <text x="0" y="20" font-family="Arial, sans-serif" font-size="8" font-weight="400" fill="#FFFFFF" letter-spacing="0.5">
+      GET IT ON
+    </text>
+    
+    <!-- "Google Play" text -->
+    <text x="0" y="38" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#FFFFFF" letter-spacing="0.2">
+      Google Play
+    </text>
+  </g>
+</svg>
