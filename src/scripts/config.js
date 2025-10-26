@@ -1,29 +1,27 @@
 /**
- * Application configuration
- * Centralized configuration for feature flags and app settings
+ * Application Configuration
+ * Central configuration file for the dispatch ride app
  */
 
-const config = {
-  // Feature flags
-  features_section_enabled: true,
-
-  // App settings
-  app: {
-    name: 'Dispatch Ride',
-    version: '1.0.0',
-  },
-
-  // API configuration
-  api: {
-    baseUrl: import.meta.env.VITE_API_BASE_URL || 'https://api.dispatchride.com',
-    timeout: 30000,
-  },
-
-  // Performance settings
-  performance: {
-    imageOptimization: true,
-    lazyLoading: true,
+export const APP_CONFIG = {
+  imageOptimization: {
+    quality: 0.8,
+    maxWidth: 1920,
+    formats: ['webp', 'jpg'],
   },
 };
 
-export default config;
+/**
+ * Animation Configuration
+ * Settings for scroll animations and transitions
+ */
+export const ANIMATION_CONFIG = {
+  // IntersectionObserver options
+  threshold: 0.1,
+  rootMargin: '0px 0px -100px 0px',
+  
+  // Animation timing
+  duration: 600,
+  delay: 100,
+  easing: 'ease-out',
+};
