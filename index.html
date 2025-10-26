@@ -19,6 +19,72 @@
       <h1>Welcome to Dispatch</h1>
       <p>Your reliable ride-hailing service</p>
     </div>
+
+    <!-- Hero Section -->
+    <section class="hero" data-feature-flag="on" aria-labelledby="hero-headline">
+      <div class="hero__content">
+        <h1 id="hero-headline" class="hero__headline">
+          Your Ride, On Demand
+        </h1>
+        <h2 class="hero__subheadline">
+          Fast, safe, and affordable transportation at your fingertips. Download the Dispatch app and get moving today.
+        </h2>
+        
+        <div class="hero__buttons" role="group" aria-label="Download app">
+          <a 
+            href="#" 
+            class="hero__button hero__button--primary"
+            aria-label="Download on the App Store"
+            rel="noopener noreferrer"
+          >
+            <img 
+              src="/src/assets/images/app-store-badge.svg" 
+              alt="Download on the App Store"
+              class="hero__button-icon"
+              width="120"
+              height="40"
+            />
+          </a>
+          
+          <a 
+            href="#" 
+            class="hero__button hero__button--secondary"
+            aria-label="Get it on Google Play"
+            rel="noopener noreferrer"
+          >
+            <img 
+              src="/src/assets/images/google-play-badge.svg" 
+              alt="Get it on Google Play"
+              class="hero__button-icon"
+              width="135"
+              height="40"
+            />
+          </a>
+        </div>
+      </div>
+
+      <div class="hero__image-container">
+        <picture>
+          <source 
+            media="(min-width: 768px)" 
+            srcset="/src/assets/images/app-mockup-desktop.png"
+            type="image/png"
+          />
+          <img 
+            src="/src/assets/images/app-mockup-mobile.png"
+            alt="Dispatch app interface showing ride booking screen"
+            class="hero__image"
+            loading="eager"
+            decoding="async"
+            width="400"
+            height="800"
+            data-loading="false"
+            data-loaded="true"
+          />
+        </picture>
+      </div>
+    </section>
+
     <script type="module" src="/src/scripts/main.js"></script>
   </body>
 </html>
