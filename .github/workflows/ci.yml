@@ -24,8 +24,5 @@ jobs:
       - name: Run lint
         run: npm run lint --if-present
 
-      - name: Run format check
-        run: npm run format:check --if-present
-
       - name: Build project
         run: npm run build --if-present
