@@ -1,141 +1,18 @@
-import { defineConfig } from 'vite'
-import { resolve } from 'path'
+import { defineConfig } from 'vite';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-/**
- * Vite Configuration for Dispatch Ride Landing Page
- * 
- * Production-ready configuration with:
- * - Development server with hot module replacement
- * - Optimized production builds with code splitting
- * - Asset optimization and minification
- * - CSS code splitting for better performance
- * - Source maps for debugging
- */
-export default defineConfig(({ command, mode }) => {
-  const isDevelopment = mode === 'development'
-  const isProduction = mode === 'production'
+// ESM __dirname polyfill
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+export default defineConfig(({ _command, mode }) => {
+  const isDevelopment = mode === 'development';
+  const isProduction = mode === 'production';
 
   return {
-    // Root directory for source files
-    root: '.',
-
-    // Public base path when served in development or production
-    base: '/',
-
-    // Development server configuration
-    server: {
-      port: 5173,
-      strictPort: false,
-      host: true,
-      open: false,
-      cors: true,
-      // Hot Module Replacement
-      hmr: {
-        overlay: true,
-      },
-    },
-
-    // Preview server configuration (for production build preview)
-    preview: {
-      port: 4173,
-      strictPort: false,
-      host: true,
-      open: false,
-      cors: true,
-    },
-
-    // Build configuration
-    build: {
-      // Output directory for production build
-      outDir: 'dist',
-      
-      // Directory for static assets relative to outDir
-      assetsDir: 'assets',
-      
-      // Inline assets smaller than this limit (in bytes)
-      assetsInlineLimit: 4096,
-      
-      // Enable CSS code splitting
-      cssCodeSplit: true,
-      
-      // Generate source maps for production debugging
-      sourcemap: isProduction ? true : false,
-      
-      // Target browsers for build output
-      target: 'es2020',
-      
-      // Minification configuration
-      minify: isProduction ? 'terser' : false,
-      
-      terserOptions: isProduction ? {
-        compress: {
-          drop_console: false,
-          drop_debugger: true,
-          pure_funcs: ['console.log'],
-        },
-        format: {
-          comments: false,
-        },
-      } : undefined,
-      
-      // Rollup-specific options
-      rollupOptions: {
-        input: {
-          main: resolve(__dirname, 'index.html'),
-        },
-        output: {
-          // Asset naming patterns
-          entryFileNames: 'assets/js/[name]-[hash].js',
-          chunkFileNames: 'assets/js/[name]-[hash].js',
-          assetFileNames: (assetInfo) => {
-            const info = assetInfo.name.split('.')
-            const ext = info[info.length - 1]
-            
-            // Organize assets by type
-            if (/\.(png|jpe?g|svg|gif|webp|avif)$/i.test(assetInfo.name)) {
-              return 'assets/images/[name]-[hash][extname]'
-            }
-            
-            if (/\.(woff2?|eot|ttf|otf)$/i.test(assetInfo.name)) {
-              return 'assets/fonts/[name]-[hash][extname]'
-            }
-            
-            if (/\.css$/i.test(assetInfo.name)) {
-              return 'assets/css/[name]-[hash][extname]'
-            }
-            
-            return 'assets/[name]-[hash][extname]'
-          },
-          
-          // Manual chunk splitting for better caching
-          manualChunks: undefined,
-        },
-      },
-      
-      // Chunk size warning limit (in kB)
-      chunkSizeWarningLimit: 500,
-      
-      // Report compressed size
-      reportCompressedSize: true,
-      
-      // Write build output to disk
-      write: true,
-      
-      // Empty outDir on build
-      emptyOutDir: true,
-    },
-
-    // CSS configuration
-    css: {
-      devSourcemap: isDevelopment,
-      preprocessorOptions: {},
-    },
-
-    // Dependency optimization
-    optimizeDeps: {
-      include: [],
-      exclude: [],
-    },
+    // Base public path
+    base: './',
 
     // Define global constants
     define: {
@@ -143,24 +20,124 @@ export default defineConfig(({ command, mode }) => {
       __PROD__: JSON.stringify(isProduction),
     },
 
-    // Plugin configuration
-    plugins: [],
+    // Server configuration
+    server: {
+      port: 3000,
+      open: true,
+      host: true,
+      cors: true,
+      strictPort: false,
+      hmr: {
+        overlay: true,
+      },
+    },
 
-    // Path resolution
+    // Preview server configuration
+    preview: {
+      port: 4173,
+      open: true,
+      host: true,
+      cors: true,
+    },
+
+    // Build configuration
+    build: {
+      outDir: 'dist',
+      assetsDir: 'assets',
+      sourcemap: isDevelopment,
+      minify: isProduction ? 'terser' : false,
+      target: 'es2015',
+      cssCodeSplit: true,
+      
+      // Terser options for production
+      terserOptions: isProduction ? {
+        compress: {
+          drop_console: true,
+          drop_debugger: true,
+          pure_funcs: ['console.log', 'console.info'],
+        },
+        format: {
+          comments: false,
+        },
+      } : undefined,
+
+      // Rollup options
+      rollupOptions: {
+        input: {
+          main: resolve(__dirname, 'index.html'),
+        },
+        output: {
+          // Asset file naming
+          assetFileNames: (assetInfo) => {
+            const info = assetInfo.name.split('.');
+            const extType = info[info.length - 1];
+            
+            if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
+              return `assets/images/[name]-[hash][extname]`;
+            }
+            if (/woff|woff2|eot|ttf|otf/i.test(extType)) {
+              return `assets/fonts/[name]-[hash][extname]`;
+            }
+            return `assets/[name]-[hash][extname]`;
+          },
+          
+          // Chunk file naming
+          chunkFileNames: 'assets/js/[name]-[hash].js',
+          entryFileNames: 'assets/js/[name]-[hash].js',
+          
+          // Manual chunks for better caching
+          manualChunks: undefined,
+        },
+      },
+
+      // Asset handling
+      assetsInlineLimit: 4096, // 4kb
+      
+      // CSS options
+      cssMinify: isProduction,
+      
+      // Report compressed size
+      reportCompressedSize: isProduction,
+      
+      // Chunk size warning limit
+      chunkSizeWarningLimit: 500,
+    },
+
+    // CSS configuration
+    css: {
+      devSourcemap: isDevelopment,
+      preprocessorOptions: {
+        // Add any CSS preprocessor options here if needed
+      },
+    },
+
+    // Resolve configuration
     resolve: {
       alias: {
         '@': resolve(__dirname, './src'),
-        '@assets': resolve(__dirname, './src/assets'),
         '@styles': resolve(__dirname, './src/styles'),
         '@scripts': resolve(__dirname, './src/scripts'),
+        '@assets': resolve(__dirname, './src/assets'),
       },
       extensions: ['.js', '.json', '.css'],
     },
 
-    // Logging configuration
-    logLevel: 'info',
+    // Optimization
+    optimizeDeps: {
+      include: [],
+      exclude: [],
+    },
 
-    // Clear screen on rebuild
+    // Plugin configuration
+    plugins: [],
+
+    // Environment variables prefix
+    envPrefix: 'VITE_',
+
+    // Log level
+    logLevel: isDevelopment ? 'info' : 'warn',
+
+    // Clear screen
     clearScreen: true,
-  }
-})
+  };
+});
