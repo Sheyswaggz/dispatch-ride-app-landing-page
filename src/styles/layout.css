@@ -1,0 +1,679 @@
+/**
+ * Layout Utilities and Container Styles
+ * 
+ * Provides responsive layout utilities using CSS Grid and Flexbox with mobile-first approach.
+ * Implements container constraints, section spacing, and flexible layout patterns.
+ * 
+ * Organization:
+ * - Container system with responsive max-widths
+ * - Section spacing utilities
+ * - Grid layout utilities
+ * - Flexbox utilities
+ * - Responsive visibility helpers
+ */
+
+/* ============================================
+   CONTAINER SYSTEM
+   ============================================ */
+
+/**
+ * Main container with responsive max-width and horizontal padding
+ * Centers content and provides consistent page margins
+ */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-padding-mobile);
+}
+
+/* Tablet breakpoint - increase padding */
+@media (width >= 768px) {
+  .container {
+    padding-inline: var(--container-padding-tablet);
+  }
+}
+
+/* Desktop breakpoint - increase padding */
+@media (width >= 1024px) {
+  .container {
+    padding-inline: var(--container-padding-desktop);
+  }
+}
+
+/**
+ * Container variants for different content widths
+ */
+.container--narrow {
+  max-width: var(--container-tablet);
+}
+
+.container--wide {
+  max-width: var(--container-wide);
+}
+
+.container--full {
+  max-width: none;
+  padding-inline: 0;
+}
+
+.container--fluid {
+  max-width: none;
+}
+
+/* ============================================
+   SECTION SPACING
+   ============================================ */
+
+/**
+ * Section wrapper with vertical spacing
+ * Provides consistent spacing between major page sections
+ */
+.section {
+  padding-block: var(--space-section-sm);
+}
+
+/* Tablet breakpoint - increase section spacing */
+@media (width >= 768px) {
+  .section {
+    padding-block: var(--space-section-md);
+  }
+}
+
+/* Desktop breakpoint - increase section spacing */
+@media (width >= 1024px) {
+  .section {
+    padding-block: var(--space-section-lg);
+  }
+}
+
+/* Wide screens - maximum section spacing */
+@media (width >= 1440px) {
+  .section {
+    padding-block: var(--space-section-xl);
+  }
+}
+
+/**
+ * Section spacing variants
+ */
+.section--compact {
+  padding-block: var(--space-8);
+}
+
+@media (width >= 768px) {
+  .section--compact {
+    padding-block: var(--space-12);
+  }
+}
+
+.section--spacious {
+  padding-block: var(--space-24);
+}
+
+@media (width >= 768px) {
+  .section--spacious {
+    padding-block: var(--space-32);
+  }
+}
+
+@media (width >= 1024px) {
+  .section--spacious {
+    padding-block: var(--space-48);
+  }
+}
+
+.section--no-padding-top {
+  padding-block-start: 0;
+}
+
+.section--no-padding-bottom {
+  padding-block-end: 0;
+}
+
+/* ============================================
+   GRID LAYOUT UTILITIES
+   ============================================ */
+
+/**
+ * Base grid container
+ * Mobile-first with single column, expands on larger screens
+ */
+.grid {
+  display: grid;
+  gap: var(--grid-gap-mobile);
+}
+
+/* Tablet breakpoint - increase grid gap */
+@media (width >= 768px) {
+  .grid {
+    gap: var(--grid-gap-tablet);
+  }
+}
+
+/* Desktop breakpoint - increase grid gap */
+@media (width >= 1024px) {
+  .grid {
+    gap: var(--grid-gap-desktop);
+  }
+}
+
+/**
+ * Auto-fit grid with minimum column width
+ * Automatically adjusts number of columns based on available space
+ */
+.grid--auto-fit {
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+}
+
+.grid--auto-fill {
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+}
+
+/**
+ * Fixed column grids - mobile first
+ */
+.grid--cols-1 {
+  grid-template-columns: 1fr;
+}
+
+.grid--cols-2 {
+  grid-template-columns: 1fr;
+}
+
+@media (width >= 640px) {
+  .grid--cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.grid--cols-3 {
+  grid-template-columns: 1fr;
+}
+
+@media (width >= 640px) {
+  .grid--cols-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width >= 1024px) {
+  .grid--cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.grid--cols-4 {
+  grid-template-columns: 1fr;
+}
+
+@media (width >= 640px) {
+  .grid--cols-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width >= 1024px) {
+  .grid--cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/**
+ * Asymmetric grid layouts
+ */
+.grid--sidebar-left {
+  grid-template-columns: 1fr;
+}
+
+@media (width >= 1024px) {
+  .grid--sidebar-left {
+    grid-template-columns: 300px 1fr;
+  }
+}
+
+.grid--sidebar-right {
+  grid-template-columns: 1fr;
+}
+
+@media (width >= 1024px) {
+  .grid--sidebar-right {
+    grid-template-columns: 1fr 300px;
+  }
+}
+
+.grid--two-thirds {
+  grid-template-columns: 1fr;
+}
+
+@media (width >= 768px) {
+  .grid--two-thirds {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+/**
+ * Grid gap variants
+ */
+.grid--gap-none {
+  gap: 0;
+}
+
+.grid--gap-sm {
+  gap: var(--space-2);
+}
+
+@media (width >= 768px) {
+  .grid--gap-sm {
+    gap: var(--space-3);
+  }
+}
+
+.grid--gap-md {
+  gap: var(--space-4);
+}
+
+@media (width >= 768px) {
+  .grid--gap-md {
+    gap: var(--space-6);
+  }
+}
+
+.grid--gap-lg {
+  gap: var(--space-6);
+}
+
+@media (width >= 768px) {
+  .grid--gap-lg {
+    gap: var(--space-8);
+  }
+}
+
+@media (width >= 1024px) {
+  .grid--gap-lg {
+    gap: var(--space-10);
+  }
+}
+
+/**
+ * Grid item utilities
+ */
+.grid-item--span-2 {
+  grid-column: span 1;
+}
+
+@media (width >= 640px) {
+  .grid-item--span-2 {
+    grid-column: span 2;
+  }
+}
+
+.grid-item--span-full {
+  grid-column: 1 / -1;
+}
+
+/* ============================================
+   FLEXBOX UTILITIES
+   ============================================ */
+
+/**
+ * Base flex container
+ */
+.flex {
+  display: flex;
+  gap: var(--space-4);
+}
+
+/**
+ * Flex direction utilities
+ */
+.flex--row {
+  flex-direction: row;
+}
+
+.flex--row-reverse {
+  flex-direction: row-reverse;
+}
+
+.flex--column {
+  flex-direction: column;
+}
+
+.flex--column-reverse {
+  flex-direction: column-reverse;
+}
+
+/**
+ * Responsive flex direction
+ */
+.flex--column-mobile {
+  flex-direction: column;
+}
+
+@media (width >= 768px) {
+  .flex--column-mobile {
+    flex-direction: row;
+  }
+}
+
+/**
+ * Flex wrap utilities
+ */
+.flex--wrap {
+  flex-wrap: wrap;
+}
+
+.flex--nowrap {
+  flex-wrap: nowrap;
+}
+
+/**
+ * Justify content utilities
+ */
+.flex--justify-start {
+  justify-content: flex-start;
+}
+
+.flex--justify-end {
+  justify-content: flex-end;
+}
+
+.flex--justify-center {
+  justify-content: center;
+}
+
+.flex--justify-between {
+  justify-content: space-between;
+}
+
+.flex--justify-around {
+  justify-content: space-around;
+}
+
+.flex--justify-evenly {
+  justify-content: space-evenly;
+}
+
+/**
+ * Align items utilities
+ */
+.flex--align-start {
+  align-items: flex-start;
+}
+
+.flex--align-end {
+  align-items: flex-end;
+}
+
+.flex--align-center {
+  align-items: center;
+}
+
+.flex--align-baseline {
+  align-items: baseline;
+}
+
+.flex--align-stretch {
+  align-items: stretch;
+}
+
+/**
+ * Gap utilities
+ */
+.flex--gap-none {
+  gap: 0;
+}
+
+.flex--gap-xs {
+  gap: var(--space-1);
+}
+
+.flex--gap-sm {
+  gap: var(--space-2);
+}
+
+.flex--gap-md {
+  gap: var(--space-4);
+}
+
+.flex--gap-lg {
+  gap: var(--space-6);
+}
+
+.flex--gap-xl {
+  gap: var(--space-8);
+}
+
+/**
+ * Flex item utilities
+ */
+.flex-item--grow {
+  flex-grow: 1;
+}
+
+.flex-item--shrink {
+  flex-shrink: 1;
+}
+
+.flex-item--no-shrink {
+  flex-shrink: 0;
+}
+
+.flex-item--auto {
+  flex: 1 1 auto;
+}
+
+.flex-item--initial {
+  flex: 0 1 auto;
+}
+
+.flex-item--none {
+  flex: none;
+}
+
+/* ============================================
+   RESPONSIVE VISIBILITY UTILITIES
+   ============================================ */
+
+/**
+ * Hide on mobile, show on tablet and up
+ */
+.hidden-mobile {
+  display: none;
+}
+
+@media (width >= 768px) {
+  .hidden-mobile {
+    display: block;
+  }
+}
+
+/**
+ * Show on mobile, hide on tablet and up
+ */
+.visible-mobile {
+  display: block;
+}
+
+@media (width >= 768px) {
+  .visible-mobile {
+    display: none;
+  }
+}
+
+/**
+ * Hide on tablet, show on mobile and desktop
+ */
+.hidden-tablet {
+  display: block;
+}
+
+@media (width >= 768px) and (width < 1024px) {
+  .hidden-tablet {
+    display: none;
+  }
+}
+
+/**
+ * Show only on tablet
+ */
+.visible-tablet {
+  display: none;
+}
+
+@media (width >= 768px) and (width < 1024px) {
+  .visible-tablet {
+    display: block;
+  }
+}
+
+/**
+ * Hide on desktop
+ */
+.hidden-desktop {
+  display: block;
+}
+
+@media (width >= 1024px) {
+  .hidden-desktop {
+    display: none;
+  }
+}
+
+/**
+ * Show only on desktop
+ */
+.visible-desktop {
+  display: none;
+}
+
+@media (width >= 1024px) {
+  .visible-desktop {
+    display: block;
+  }
+}
+
+/* ============================================
+   ASPECT RATIO UTILITIES
+   ============================================ */
+
+/**
+ * Aspect ratio containers using modern aspect-ratio property
+ */
+.aspect-ratio-16-9 {
+  aspect-ratio: 16 / 9;
+}
+
+.aspect-ratio-4-3 {
+  aspect-ratio: 4 / 3;
+}
+
+.aspect-ratio-1-1 {
+  aspect-ratio: 1 / 1;
+}
+
+.aspect-ratio-21-9 {
+  aspect-ratio: 21 / 9;
+}
+
+/* ============================================
+   CENTERING UTILITIES
+   ============================================ */
+
+/**
+ * Center content using flexbox
+ */
+.center-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/**
+ * Center content using grid
+ */
+.center-grid {
+  display: grid;
+  place-items: center;
+}
+
+/**
+ * Center block element horizontally
+ */
+.center-block {
+  margin-inline: auto;
+}
+
+/* ============================================
+   STACK LAYOUT
+   ============================================ */
+
+/**
+ * Vertical stack with consistent spacing
+ * Useful for content flow with automatic spacing
+ */
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.stack > * + * {
+  margin-block-start: var(--space-4);
+}
+
+.stack--sm > * + * {
+  margin-block-start: var(--space-2);
+}
+
+.stack--md > * + * {
+  margin-block-start: var(--space-4);
+}
+
+.stack--lg > * + * {
+  margin-block-start: var(--space-6);
+}
+
+.stack--xl > * + * {
+  margin-block-start: var(--space-8);
+}
+
+/* ============================================
+   CLUSTER LAYOUT
+   ============================================ */
+
+/**
+ * Horizontal cluster with wrapping
+ * Useful for tags, badges, or inline elements
+ */
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.cluster--sm {
+  gap: var(--space-1);
+}
+
+.cluster--md {
+  gap: var(--space-3);
+}
+
+.cluster--lg {
+  gap: var(--space-4);
+}
+
+/* ============================================
+   FULL BLEED LAYOUT
+   ============================================ */
+
+/**
+ * Break out of container to full viewport width
+ * Useful for background sections within containers
+ */
+.full-bleed {
+  width: 100vw;
+  margin-inline-start: 50%;
+  transform: translateX(-50%);
+}

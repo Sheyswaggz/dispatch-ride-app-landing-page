@@ -1,0 +1,76 @@
+# Dependencies
+node_modules/
+bower_components/
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+.vite/
+
+# Coverage reports
+coverage/
+.nyc_output/
+
+# Minified files
+*.min.js
+*.min.css
+
+# Bundle files
+bundle*.js
+bundle*.css
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# Generated documentation
+docs/dist/
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+
+# Cache files
+.eslintcache
+.stylelintcache
+.prettiercache
+
+# Public/static assets (if they contain third-party code)
+public/vendor/
+static/vendor/
+
+# Third-party code
+vendor/
+external/
+
+# Environment files (may contain sensitive data)
+.env
+.env.local
+.env.*.local

@@ -1,0 +1,547 @@
+/**
+ * Base Typography and Global Styles
+ * 
+ * Implements mobile-first responsive typography using design tokens from variables.css.
+ * Provides consistent text styling, spacing, and interactive states across the application.
+ * 
+ * Organization:
+ * - Body and root element styles
+ * - Heading hierarchy (h1-h6)
+ * - Paragraph and text elements
+ * - Link styles with interactive states
+ * - Responsive typography adjustments
+ */
+
+/* ============================================
+   ROOT AND BODY STYLES
+   ============================================ */
+
+html {
+  /* Ensure smooth scrolling is inherited from reset.css */
+  /* Font size is set in reset.css for rem calculations */
+}
+
+body {
+  /* Typography */
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+  letter-spacing: var(--letter-spacing-normal);
+  
+  /* Colors */
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-primary);
+  
+  /* Text rendering optimization */
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  /* Prevent horizontal overflow */
+  overflow-x: hidden;
+}
+
+/* ============================================
+   HEADING STYLES
+   ============================================ */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-text-primary);
+  margin-block-start: 0;
+  margin-block-end: var(--space-4);
+  text-wrap: balance; /* Prevent orphans in headings */
+}
+
+h1 {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-extrabold);
+  margin-block-end: var(--space-6);
+}
+
+h2 {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  margin-block-end: var(--space-5);
+}
+
+h3 {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  margin-block-end: var(--space-4);
+}
+
+h4 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  margin-block-end: var(--space-4);
+}
+
+h5 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin-block-end: var(--space-3);
+}
+
+h6 {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  margin-block-end: var(--space-3);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+/* Heading spacing adjustments when preceded by content */
+* + h1,
+* + h2,
+* + h3,
+* + h4,
+* + h5,
+* + h6 {
+  margin-block-start: var(--space-8);
+}
+
+/* ============================================
+   PARAGRAPH AND TEXT ELEMENTS
+   ============================================ */
+
+p {
+  margin-block-start: 0;
+  margin-block-end: var(--space-4);
+  max-width: 65ch; /* Optimal reading width */
+}
+
+/* Last paragraph in a container should have no bottom margin */
+p:last-child {
+  margin-block-end: 0;
+}
+
+/* Lead paragraph - larger, introductory text */
+.lead,
+p.lead {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-secondary);
+  margin-block-end: var(--space-6);
+}
+
+/* Small text */
+small,
+.text-small {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+}
+
+/* Extra small text */
+.text-xs {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-normal);
+}
+
+/* Text emphasis */
+strong,
+b {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+em,
+i {
+  font-style: italic;
+}
+
+/* Text color utilities */
+.text-primary {
+  color: var(--color-text-primary);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-tertiary {
+  color: var(--color-text-tertiary);
+}
+
+.text-inverse {
+  color: var(--color-text-inverse);
+}
+
+/* ============================================
+   LINK STYLES
+   ============================================ */
+
+a {
+  color: var(--color-text-link);
+  text-decoration: none;
+  transition: color var(--transition-fast),
+              text-decoration-color var(--transition-fast);
+  cursor: pointer;
+  
+  /* Underline styling */
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+/* Hover state */
+a:hover {
+  color: var(--color-text-link-hover);
+  text-decoration-color: currentColor;
+}
+
+/* Focus state for keyboard navigation */
+a:focus {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Focus visible - only show outline for keyboard navigation */
+a:focus:not(:focus-visible) {
+  outline: none;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Active state */
+a:active {
+  color: var(--color-primary-700);
+}
+
+/* Visited state - subtle difference */
+a:visited {
+  color: var(--color-primary-700);
+}
+
+/* Links within paragraphs */
+p a {
+  font-weight: var(--font-weight-medium);
+}
+
+/* External link indicator (optional) */
+a[target="_blank"]::after {
+  content: "↗";
+  display: inline-block;
+  margin-inline-start: 0.25em;
+  font-size: 0.875em;
+  vertical-align: super;
+}
+
+/* Disable external indicator for specific cases */
+a[target="_blank"].no-external-icon::after {
+  content: none;
+}
+
+/* ============================================
+   LIST STYLES
+   ============================================ */
+
+ul,
+ol {
+  margin-block-start: 0;
+  margin-block-end: var(--space-4);
+  padding-inline-start: var(--space-6);
+}
+
+ul {
+  list-style-type: disc;
+}
+
+ol {
+  list-style-type: decimal;
+}
+
+li {
+  margin-block-end: var(--space-2);
+  line-height: var(--line-height-relaxed);
+}
+
+li:last-child {
+  margin-block-end: 0;
+}
+
+/* Nested lists */
+ul ul,
+ol ol,
+ul ol,
+ol ul {
+  margin-block-start: var(--space-2);
+  margin-block-end: var(--space-2);
+}
+
+/* ============================================
+   BLOCKQUOTE STYLES
+   ============================================ */
+
+blockquote {
+  margin-block-start: var(--space-6);
+  margin-block-end: var(--space-6);
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  padding-inline-start: var(--space-6);
+  border-inline-start: 4px solid var(--color-primary-500);
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+blockquote p {
+  margin-block-end: var(--space-3);
+}
+
+blockquote cite {
+  display: block;
+  margin-block-start: var(--space-3);
+  font-size: var(--font-size-sm);
+  font-style: normal;
+  color: var(--color-text-tertiary);
+}
+
+blockquote cite::before {
+  content: "— ";
+}
+
+/* ============================================
+   CODE AND PREFORMATTED TEXT
+   ============================================ */
+
+code,
+kbd,
+samp {
+  font-family: var(--font-family-mono);
+  font-size: 0.875em;
+  padding: 0.125em 0.375em;
+  background-color: var(--color-surface-secondary);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border-light);
+}
+
+pre {
+  margin-block-start: var(--space-4);
+  margin-block-end: var(--space-4);
+  padding: var(--space-4);
+  background-color: var(--color-surface-secondary);
+  border-radius: var(--radius-base);
+  border: 1px solid var(--color-border-light);
+  overflow-x: auto;
+  line-height: var(--line-height-relaxed);
+}
+
+pre code {
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  font-size: var(--font-size-sm);
+}
+
+/* ============================================
+   HORIZONTAL RULE
+   ============================================ */
+
+hr {
+  margin-block-start: var(--space-8);
+  margin-block-end: var(--space-8);
+  border: 0;
+  border-block-start: 1px solid var(--color-border-light);
+}
+
+/* ============================================
+   SELECTION STYLES
+   ============================================ */
+
+::selection {
+  background-color: var(--color-primary-200);
+  color: var(--color-primary-900);
+}
+
+::-moz-selection {
+  background-color: var(--color-primary-200);
+  color: var(--color-primary-900);
+}
+
+/* ============================================
+   RESPONSIVE TYPOGRAPHY ADJUSTMENTS
+   ============================================ */
+
+/* Tablet and above - subtle adjustments */
+@media (min-width: 768px) {
+  body {
+    line-height: var(--line-height-relaxed);
+  }
+  
+  h1,
+  h2,
+  h3 {
+    margin-block-end: var(--space-8);
+  }
+  
+  p {
+    margin-block-end: var(--space-5);
+  }
+  
+  .lead,
+  p.lead {
+    font-size: var(--font-size-xl);
+    margin-block-end: var(--space-8);
+  }
+  
+  blockquote {
+    margin-block-start: var(--space-8);
+    margin-block-end: var(--space-8);
+    padding-inline-start: var(--space-8);
+  }
+}
+
+/* Desktop and above - optimal reading experience */
+@media (min-width: 1024px) {
+  p {
+    max-width: 70ch;
+  }
+  
+  .lead,
+  p.lead {
+    max-width: 60ch;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY ENHANCEMENTS
+   ============================================ */
+
+/* Skip link for keyboard navigation */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-primary-600);
+  color: var(--color-text-inverse);
+  padding: var(--space-2) var(--space-4);
+  text-decoration: none;
+  border-radius: 0 0 var(--radius-base) 0;
+  z-index: var(--z-index-tooltip);
+  font-weight: var(--font-weight-semibold);
+  transition: top var(--transition-fast);
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid var(--color-text-inverse);
+  outline-offset: -2px;
+}
+
+/* Screen reader only text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+  body {
+    font-size: 12pt;
+    line-height: 1.5;
+    color: #000;
+    background: #fff;
+  }
+  
+  h1 {
+    font-size: 24pt;
+  }
+  
+  h2 {
+    font-size: 20pt;
+  }
+  
+  h3 {
+    font-size: 16pt;
+  }
+  
+  h4,
+  h5,
+  h6 {
+    font-size: 14pt;
+  }
+  
+  a {
+    color: #000;
+    text-decoration: underline;
+  }
+  
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 10pt;
+    color: #666;
+  }
+  
+  blockquote {
+    border-inline-start-color: #000;
+  }
+}
+
+/* ============================================
+   DARK MODE SUPPORT
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+  /* Dark mode adjustments are handled by variables.css */
+  /* Additional dark mode specific typography adjustments can go here */
+  
+  code,
+  kbd,
+  samp {
+    background-color: var(--color-surface-tertiary);
+  }
+  
+  pre {
+    background-color: var(--color-surface-tertiary);
+  }
+}
+
+/* ============================================
+   HIGH CONTRAST MODE
+   ============================================ */
+
+@media (prefers-contrast: high) {
+  body {
+    font-weight: var(--font-weight-medium);
+  }
+  
+  a {
+    text-decoration: underline;
+    text-decoration-color: currentColor;
+    font-weight: var(--font-weight-bold);
+  }
+  
+  code,
+  kbd,
+  samp,
+  pre {
+    border-width: 2px;
+  }
+}

@@ -1,2 +1,14 @@
-# dispatch-ride-app-landing-page
-This is a simple static landing page project. Recommended: 1 milestone, 1 sprint, 4 tasks. The project requires a clean, modern landing page to showcase a dispatch ride app with key features, benefits, and call-to-action elements. No complex framework needed as requirements are purely presentational with minimal interactivity. Focus on responsiv...
+# Dispatch Ride App Landing Page
+
+Modern, responsive static landing page for Dispatch Ride App built with vanilla HTML, CSS, and JavaScript. Features optimized performance, mobile-first design, and production-ready tooling.
+
+## 📋 Prerequisites
+
+- **Node.js**: >= 18.0.0
+- **npm**: >= 9.0.0 (comes with Node.js)
+
+## 🚀 Quick Start
+
+### Installation
+
+1. Clone the repository:
