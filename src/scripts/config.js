@@ -1,316 +1,246 @@
 /**
- * Configuration Module
- * 
- * Centralized configuration for feature flags, app settings, and environment-specific values.
- * Provides runtime configuration with validation and type safety through JSDoc.
- * 
- * @module config
- * @generated-from task-id:TASK-002 sprint:current
- * @modifies none - new file
- * @dependencies none
+ * Application Configuration
+ * Centralized configuration management for the Dispatch Ride landing page
  */
 
 /**
- * @typedef {Object} FeatureFlags
- * @property {boolean} hero_section_enabled - Controls visibility of hero section
+ * Environment detection
  */
-
-/**
- * @typedef {Object} AppStoreUrls
- * @property {string} ios - Apple App Store URL (placeholder)
- * @property {string} android - Google Play Store URL (placeholder)
- */
-
-/**
- * @typedef {Object} ImageOptimization
- * @property {boolean} lazyLoading - Enable lazy loading for images
- * @property {string[]} formats - Supported image formats in order of preference
- * @property {number} maxWidth - Maximum image width for responsive images
- */
-
-/**
- * @typedef {Object} PerformanceBudgets
- * @property {number} lcpThreshold - Largest Contentful Paint threshold in seconds
- * @property {number} maxImageSize - Maximum individual image size in KB
- * @property {number} maxHeroWeight - Maximum total hero section weight in KB
- */
-
-/**
- * @typedef {Object} AppConfig
- * @property {FeatureFlags} featureFlags - Feature flag configuration
- * @property {AppStoreUrls} appStoreUrls - App store download URLs
- * @property {ImageOptimization} imageOptimization - Image optimization settings
- * @property {PerformanceBudgets} performanceBudgets - Performance budget thresholds
- * @property {string} environment - Current environment (development/production)
- * @property {boolean} debug - Debug mode flag
- */
-
-/**
- * Validates configuration object structure and values
- * @param {AppConfig} config - Configuration object to validate
- * @throws {Error} If configuration is invalid
- * @returns {void}
- */
-function validateConfig(config) {
-  if (!config || typeof config !== 'object') {
-    throw new Error('Configuration must be a valid object');
-  }
-
-  if (typeof config.featureFlags?.hero_section_enabled !== 'boolean') {
-    throw new Error('featureFlags.hero_section_enabled must be a boolean');
-  }
-
-  if (typeof config.appStoreUrls?.ios !== 'string' || !config.appStoreUrls.ios) {
-    throw new Error('appStoreUrls.ios must be a non-empty string');
-  }
-
-  if (typeof config.appStoreUrls?.android !== 'string' || !config.appStoreUrls.android) {
-    throw new Error('appStoreUrls.android must be a non-empty string');
-  }
-
-  if (typeof config.imageOptimization?.lazyLoading !== 'boolean') {
-    throw new Error('imageOptimization.lazyLoading must be a boolean');
-  }
-
-  if (!Array.isArray(config.imageOptimization?.formats) || config.imageOptimization.formats.length === 0) {
-    throw new Error('imageOptimization.formats must be a non-empty array');
-  }
-
-  if (typeof config.imageOptimization?.maxWidth !== 'number' || config.imageOptimization.maxWidth <= 0) {
-    throw new Error('imageOptimization.maxWidth must be a positive number');
-  }
-
-  if (typeof config.performanceBudgets?.lcpThreshold !== 'number' || config.performanceBudgets.lcpThreshold <= 0) {
-    throw new Error('performanceBudgets.lcpThreshold must be a positive number');
-  }
-
-  if (typeof config.performanceBudgets?.maxImageSize !== 'number' || config.performanceBudgets.maxImageSize <= 0) {
-    throw new Error('performanceBudgets.maxImageSize must be a positive number');
-  }
-
-  if (typeof config.performanceBudgets?.maxHeroWeight !== 'number' || config.performanceBudgets.maxHeroWeight <= 0) {
-    throw new Error('performanceBudgets.maxHeroWeight must be a positive number');
-  }
-
-  const validEnvironments = ['development', 'production'];
-  if (!validEnvironments.includes(config.environment)) {
-    throw new Error(`environment must be one of: ${validEnvironments.join(', ')}`);
-  }
-
-  if (typeof config.debug !== 'boolean') {
-    throw new Error('debug must be a boolean');
-  }
-}
-
-/**
- * Determines current environment from various sources
- * @returns {string} Current environment (development or production)
- */
-function detectEnvironment() {
-  // Check Vite environment variable
-  if (typeof import.meta !== 'undefined' && import.meta.env) {
-    return import.meta.env.MODE === 'production' ? 'production' : 'development';
-  }
-
-  // Check Node.js environment variable
-  if (typeof process !== 'undefined' && process.env) {
-    return process.env.NODE_ENV === 'production' ? 'production' : 'development';
-  }
-
-  // Check global __PROD__ flag set by Vite
-  if (typeof __PROD__ !== 'undefined') {
-    return __PROD__ ? 'production' : 'development';
-  }
-
-  // Default to development for safety
-  return 'development';
-}
-
-/**
- * Application configuration object
- * @type {AppConfig}
- */
-const config = {
-  /**
-   * Feature flags for controlling application features
-   */
-  featureFlags: {
-    /**
-     * Controls visibility of hero section
-     * Set to false to hide hero section (kill switch)
-     */
-    hero_section_enabled: true,
-  },
-
-  /**
-   * App store download URLs
-   * These are placeholder URLs to be updated with actual store links
-   */
-  appStoreUrls: {
-    /**
-     * Apple App Store URL
-     * TODO: Replace with actual App Store URL when available
-     */
-    ios: 'https://apps.apple.com/app/dispatch-ride',
-
-    /**
-     * Google Play Store URL
-     * TODO: Replace with actual Play Store URL when available
-     */
-    android: 'https://play.google.com/store/apps/details?id=com.dispatchride.app',
-  },
-
-  /**
-   * Image optimization configuration
-   */
-  imageOptimization: {
-    /**
-     * Enable lazy loading for images
-     * Uses native loading="lazy" attribute
-     */
-    lazyLoading: true,
-
-    /**
-     * Supported image formats in order of preference
-     * WebP first for modern browsers, with fallbacks
-     */
-    formats: ['webp', 'png', 'jpg'],
-
-    /**
-     * Maximum image width for responsive images
-     * Used for srcset generation
-     */
-    maxWidth: 1920,
-  },
-
-  /**
-   * Performance budget thresholds
-   * Used for monitoring and alerting
-   */
-  performanceBudgets: {
-    /**
-     * Largest Contentful Paint threshold in seconds
-     * Target: < 2.5s for good user experience
-     */
-    lcpThreshold: 2.5,
-
-    /**
-     * Maximum individual image size in KB
-     * Ensures fast loading on slower connections
-     */
-    maxImageSize: 200,
-
-    /**
-     * Maximum total hero section weight in KB
-     * Includes all images and assets
-     */
-    maxHeroWeight: 500,
-  },
-
-  /**
-   * Current environment
-   * Automatically detected from build system
-   */
-  environment: detectEnvironment(),
-
-  /**
-   * Debug mode flag
-   * Enables additional logging and validation in development
-   */
-  get debug() {
-    return this.environment === 'development';
-  },
-};
-
-// Validate configuration on module load
-try {
-  validateConfig(config);
-} catch (error) {
-  console.error('[CONFIG] Configuration validation failed:', error.message);
-  throw error;
-}
-
-// Log configuration in debug mode
-if (config.debug) {
-  console.log('[CONFIG] Configuration loaded:', {
-    environment: config.environment,
-    featureFlags: config.featureFlags,
-    debug: config.debug,
-  });
-}
-
-// Freeze configuration to prevent runtime modifications
-Object.freeze(config.featureFlags);
-Object.freeze(config.appStoreUrls);
-Object.freeze(config.imageOptimization);
-Object.freeze(config.imageOptimization.formats);
-Object.freeze(config.performanceBudgets);
-Object.freeze(config);
-
-/**
- * Get feature flag value
- * @param {string} flagName - Name of the feature flag
- * @returns {boolean} Feature flag value
- * @throws {Error} If flag name is invalid
- */
-export function getFeatureFlag(flagName) {
-  if (typeof flagName !== 'string' || !flagName) {
-    throw new Error('Flag name must be a non-empty string');
-  }
-
-  if (!(flagName in config.featureFlags)) {
-    throw new Error(`Unknown feature flag: ${flagName}`);
-  }
-
-  return config.featureFlags[flagName];
-}
-
-/**
- * Get app store URL for platform
- * @param {'ios' | 'android'} platform - Platform identifier
- * @returns {string} App store URL
- * @throws {Error} If platform is invalid
- */
-export function getAppStoreUrl(platform) {
-  const validPlatforms = ['ios', 'android'];
-  
-  if (!validPlatforms.includes(platform)) {
-    throw new Error(`Invalid platform: ${platform}. Must be one of: ${validPlatforms.join(', ')}`);
-  }
-
-  return config.appStoreUrls[platform];
-}
-
-/**
- * Check if feature is enabled
- * @param {string} featureName - Name of the feature
- * @returns {boolean} True if feature is enabled
- */
-export function isFeatureEnabled(featureName) {
+const isDevelopment = () => {
   try {
-    return getFeatureFlag(`${featureName}_enabled`);
+    return process.env.NODE_ENV === 'development';
   } catch {
     return false;
   }
+};
+
+const isProduction = () => {
+  try {
+    return __PROD__ === true;
+  } catch {
+    return true;
+  }
+};
+
+/**
+ * API Configuration
+ */
+export const API_CONFIG = {
+  baseUrl: isDevelopment()
+    ? 'http://localhost:3000/api'
+    : 'https://api.dispatchride.com',
+  timeout: 10000,
+  retryAttempts: 3,
+  retryDelay: 1000,
+};
+
+/**
+ * Image Optimization Configuration
+ */
+export const IMAGE_CONFIG = {
+  // Lazy loading settings
+  lazyLoad: {
+    rootMargin: '50px',
+    threshold: 0.01,
+    enableNativeLazyLoad: true,
+  },
+
+  // Responsive image breakpoints
+  breakpoints: {
+    mobile: 320,
+    tablet: 768,
+    desktop: 1024,
+    wide: 1440,
+  },
+
+  // Image quality settings
+  quality: {
+    default: 85,
+    thumbnail: 70,
+    hero: 90,
+  },
+
+  // Supported formats (in order of preference)
+  formats: ['webp', 'avif', 'jpg', 'png'],
+
+  // Placeholder settings
+  placeholder: {
+    enabled: true,
+    blur: 10,
+    quality: 20,
+  },
+};
+
+/**
+ * Animation Configuration
+ */
+export const ANIMATION_CONFIG = {
+  // Scroll animation settings
+  scroll: {
+    threshold: 0.1,
+    rootMargin: '0px',
+    triggerOnce: true,
+  },
+
+  // Transition durations (in ms)
+  durations: {
+    fast: 200,
+    normal: 300,
+    slow: 500,
+  },
+
+  // Easing functions
+  easing: {
+    default: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    smooth: 'cubic-bezier(0.25, 0.1, 0.25, 1)',
+    bounce: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+  },
+};
+
+/**
+ * Performance Configuration
+ */
+export const PERFORMANCE_CONFIG = {
+  // Resource hints
+  preconnect: [
+    'https://fonts.googleapis.com',
+    'https://fonts.gstatic.com',
+    'https://api.dispatchride.com',
+  ],
+
+  // Prefetch settings
+  prefetch: {
+    enabled: true,
+    priority: 'low',
+  },
+
+  // Service Worker settings
+  serviceWorker: {
+    enabled: isProduction(),
+    scope: '/',
+    updateInterval: 3600000, // 1 hour
+  },
+
+  // Cache settings
+  cache: {
+    images: {
+      maxAge: 604800, // 1 week
+      maxSize: 50, // MB
+    },
+    static: {
+      maxAge: 2592000, // 30 days
+    },
+  },
+};
+
+/**
+ * Analytics Configuration
+ */
+export const ANALYTICS_CONFIG = {
+  enabled: isProduction(),
+  trackingId: 'UA-XXXXXXXXX-X', // Replace with actual tracking ID
+  anonymizeIp: true,
+  cookieExpires: 63072000, // 2 years
+
+  // Events to track
+  events: {
+    downloadClick: 'download_click',
+    formSubmit: 'form_submit',
+    videoPlay: 'video_play',
+    scrollDepth: 'scroll_depth',
+  },
+};
+
+/**
+ * Form Configuration
+ */
+export const FORM_CONFIG = {
+  // Validation settings
+  validation: {
+    email: {
+      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      message: 'Please enter a valid email address',
+    },
+    phone: {
+      pattern: /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/,
+      message: 'Please enter a valid phone number',
+    },
+  },
+
+  // Submission settings
+  submission: {
+    timeout: 10000,
+    retryAttempts: 2,
+    successMessage: 'Thank you! We\'ll be in touch soon.',
+    errorMessage: 'Something went wrong. Please try again.',
+  },
+};
+
+/**
+ * App Store Links
+ */
+export const APP_LINKS = {
+  ios: {
+    url: 'https://apps.apple.com/app/dispatch-ride',
+    badge: '/src/assets/images/app-store-badge.svg',
+  },
+  android: {
+    url: 'https://play.google.com/store/apps/details?id=com.dispatchride',
+    badge: '/src/assets/images/google-play-badge.svg',
+  },
+};
+
+/**
+ * Social Media Links
+ */
+export const SOCIAL_LINKS = {
+  facebook: 'https://facebook.com/dispatchride',
+  twitter: 'https://twitter.com/dispatchride',
+  instagram: 'https://instagram.com/dispatchride',
+  linkedin: 'https://linkedin.com/company/dispatchride',
+};
+
+/**
+ * Feature Flags
+ */
+export const FEATURES = {
+  newsletter: true,
+  testimonials: true,
+  blog: false,
+  liveChat: false,
+};
+
+/**
+ * Development Tools
+ */
+if (isDevelopment()) {
+  // Expose config to window for debugging
+  window.__APP_CONFIG__ = {
+    API_CONFIG,
+    IMAGE_CONFIG,
+    ANIMATION_CONFIG,
+    PERFORMANCE_CONFIG,
+    ANALYTICS_CONFIG,
+    FORM_CONFIG,
+    APP_LINKS,
+    SOCIAL_LINKS,
+    FEATURES,
+  };
+
+  console.warn('Development mode: App config exposed to window.__APP_CONFIG__');
 }
 
 /**
- * Get performance budget value
- * @param {string} budgetName - Name of the performance budget
- * @returns {number} Budget value
- * @throws {Error} If budget name is invalid
+ * Export all configurations
  */
-export function getPerformanceBudget(budgetName) {
-  if (typeof budgetName !== 'string' || !budgetName) {
-    throw new Error('Budget name must be a non-empty string');
-  }
-
-  if (!(budgetName in config.performanceBudgets)) {
-    throw new Error(`Unknown performance budget: ${budgetName}`);
-  }
-
-  return config.performanceBudgets[budgetName];
-}
-
-// Default export
-export default config;
+export default {
+  API_CONFIG,
+  IMAGE_CONFIG,
+  ANIMATION_CONFIG,
+  PERFORMANCE_CONFIG,
+  ANALYTICS_CONFIG,
+  FORM_CONFIG,
+  APP_LINKS,
+  SOCIAL_LINKS,
+  FEATURES,
+};
