@@ -1,6 +1,6 @@
 /**
  * Main JavaScript entry point for Dispatch Ride Landing Page
- * Handles navigation, smooth scrolling, and interactive features
+ * Handles navigation, smooth scrolling, form validation, and interactive features
  */
 
 // ============================================================================
@@ -18,8 +18,9 @@ const CONFIG = {
   // Animation delays
   animationDelay: 100,
   
-  // Breakpoints
-  mobileBreakpoint: 768,
+  // Form validation
+  emailRegex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+  phoneRegex: /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/,
 };
 
 // ============================================================================
@@ -27,14 +28,14 @@ const CONFIG = {
 // ============================================================================
 
 const state = {
-  isMobileMenuOpen: false,
-  currentSection: null,
+  isMenuOpen: false,
+  activeSection: 'hero',
+  scrollPosition: 0,
   isScrolling: false,
 };
 
-// Development mode logging
 if (__DEV__) {
-  console.warn('Running in development mode');
+  console.warn('App initialized in development mode');
 }
 
 // ============================================================================
@@ -82,91 +83,95 @@ if (__DEV__) {
   console.warn('Utility functions loaded');
 }
 
-// ============================================================================
-// SMOOTH SCROLLING
-// ============================================================================
+/**
+ * Smooth scroll to element
+ * @param {HTMLElement} element - Target element
+ * @param {number} offset - Scroll offset
+ */
+function smoothScrollTo(element, offset = CONFIG.scrollOffset) {
+  if (!element) return;
+  
+  const targetPosition = element.getBoundingClientRect().top + window.pageYOffset - offset;
+  
+  window.scrollTo({
+    top: targetPosition,
+    behavior: 'smooth',
+  });
+}
 
 /**
- * Smooth scroll to target element
- * @param {HTMLElement} target - Target element to scroll to
+ * Get current scroll position
+ * @returns {number} Current scroll position
  */
-function smoothScrollTo(target) {
-  if (!target) return;
+function getScrollPosition() {
+  return window.pageYOffset || document.documentElement.scrollTop;
+}
+
+/**
+ * Check if element is in viewport
+ * @param {HTMLElement} element - Element to check
+ * @returns {boolean} True if element is in viewport
+ */
+function isInViewport(element) {
+  if (!element) return false;
   
-  const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
-  const startPosition = window.pageYOffset;
-  const distance = targetPosition - startPosition - CONFIG.scrollOffset;
-  const startTime = performance.now();
-  
-  function animation(currentTime) {
-    const elapsed = currentTime - startTime;
-    const progress = Math.min(elapsed / CONFIG.scrollDuration, 1);
-    
-    // Easing function (ease-in-out)
-    const ease = progress < 0.5
-      ? 2 * progress * progress
-      : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-    
-    window.scrollTo(0, startPosition + distance * ease);
-    
-    if (progress < 1) {
-      requestAnimationFrame(animation);
-    } else {
-      state.isScrolling = false;
-    }
-  }
-  
-  state.isScrolling = true;
-  requestAnimationFrame(animation);
+  const rect = element.getBoundingClientRect();
+  return (
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+  );
 }
 
 // ============================================================================
-// NAVIGATION
+// NAVIGATION FUNCTIONALITY
 // ============================================================================
 
 /**
  * Initialize navigation functionality
  */
 function initNavigation() {
-  const nav = document.querySelector('.nav');
-  const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-  const navLinks = document.querySelectorAll('.nav__link');
+  const header = document.querySelector('header');
+  const menuToggle = document.querySelector('.menu-toggle');
+  const navLinks = document.querySelectorAll('nav a[href^="#"]');
+  
+  if (!header || !menuToggle) {
+    console.error('Required navigation elements not found');
+    return;
+  }
   
   // Mobile menu toggle
-  if (mobileMenuToggle) {
-    mobileMenuToggle.addEventListener('click', toggleMobileMenu);
-  }
+  menuToggle.addEventListener('click', toggleMobileMenu);
   
   // Smooth scroll for navigation links
   navLinks.forEach(link => {
     link.addEventListener('click', handleNavLinkClick);
   });
   
-  // Sticky navigation on scroll
+  // Header scroll behavior
   window.addEventListener('scroll', throttle(handleScroll, 100));
   
-  // Close mobile menu on window resize
-  window.addEventListener('resize', debounce(handleResize, 250));
+  // Close mobile menu on outside click
+  document.addEventListener('click', handleOutsideClick);
+  
+  // Handle escape key to close menu
+  document.addEventListener('keydown', handleEscapeKey);
 }
 
 /**
  * Toggle mobile menu
  */
 function toggleMobileMenu() {
-  state.isMobileMenuOpen = !state.isMobileMenuOpen;
-  const nav = document.querySelector('.nav');
-  const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+  state.isMenuOpen = !state.isMenuOpen;
+  const menuToggle = document.querySelector('.menu-toggle');
   
-  if (nav) {
-    nav.classList.toggle('nav--open', state.isMobileMenuOpen);
+  if (menuToggle) {
+    menuToggle.setAttribute('aria-expanded', state.isMenuOpen.toString());
+    menuToggle.classList.toggle('active', state.isMenuOpen);
   }
   
-  if (mobileMenuToggle) {
-    mobileMenuToggle.setAttribute('aria-expanded', state.isMobileMenuOpen);
-  }
-  
-  // Prevent body scroll when menu is open
-  document.body.style.overflow = state.isMobileMenuOpen ? 'hidden' : '';
+  document.body.classList.toggle('menu-open', state.isMenuOpen);
 }
 
 /**
@@ -174,25 +179,21 @@ function toggleMobileMenu() {
  * @param {Event} e - Click event
  */
 function handleNavLinkClick(e) {
-  const href = e.currentTarget.getAttribute('href');
-  
-  // Only handle internal links
-  if (!href || !href.startsWith('#')) return;
-  
   e.preventDefault();
   
-  const targetId = href.substring(1);
-  const targetElement = document.getElementById(targetId);
+  const targetId = e.currentTarget.getAttribute('href');
+  const targetElement = document.querySelector(targetId);
   
-  if (Boolean(targetElement)) {
+  if (targetElement) {
     smoothScrollTo(targetElement);
     
-    if (Boolean(state.isMobileMenuOpen)) {
+    // Close mobile menu if open
+    if (state.isMenuOpen) {
       toggleMobileMenu();
     }
     
-    // Update URL without triggering scroll
-    history.pushState(null, '', href);
+    // Update active state
+    updateActiveNavLink(targetId);
   }
 }
 
@@ -200,170 +201,297 @@ function handleNavLinkClick(e) {
  * Handle scroll events
  */
 function handleScroll() {
-  const nav = document.querySelector('.nav');
-  if (!nav) return;
+  const header = document.querySelector('header');
+  if (!header) return;
   
-  const scrollPosition = window.pageYOffset;
+  const scrollPosition = getScrollPosition();
   
-  // Add sticky class when scrolled past header
-  if (scrollPosition > 100) {
-    nav.classList.add('nav--sticky');
+  // Add/remove scrolled class
+  if (scrollPosition > 50) {
+    header.classList.add('scrolled');
   } else {
-    nav.classList.remove('nav--sticky');
+    header.classList.remove('scrolled');
   }
   
-  // Update active navigation link
-  updateActiveNavLink();
+  // Update active section
+  updateActiveSection();
+  
+  state.scrollPosition = scrollPosition;
 }
 
 /**
- * Handle window resize
+ * Handle clicks outside mobile menu
+ * @param {Event} e - Click event
  */
-function handleResize() {
-  if (window.innerWidth > CONFIG.mobileBreakpoint && state.isMobileMenuOpen) {
+function handleOutsideClick(e) {
+  if (!state.isMenuOpen) return;
+  
+  const menuToggle = document.querySelector('.menu-toggle');
+  const nav = document.querySelector('nav');
+  
+  const element = e.target;
+  const actualHandler = element && !menuToggle?.contains(element) && !nav?.contains(element);
+  
+  if (actualHandler) {
     toggleMobileMenu();
   }
 }
 
 /**
- * Update active navigation link based on scroll position
+ * Handle escape key press
+ * @param {KeyboardEvent} e - Keyboard event
  */
-function updateActiveNavLink() {
-  const sections = document.querySelectorAll('section[id]');
-  const navLinks = document.querySelectorAll('.nav__link');
+function handleEscapeKey(e) {
+  if (e.key === 'Escape' && state.isMenuOpen) {
+    toggleMobileMenu();
+  }
+}
+
+/**
+ * Update active navigation link
+ * @param {string} targetId - Target section ID
+ */
+function updateActiveNavLink(targetId) {
+  const navLinks = document.querySelectorAll('nav a[href^="#"]');
   
-  let currentSection = null;
+  navLinks.forEach(link => {
+    if (link.getAttribute('href') === targetId) {
+      link.classList.add('active');
+    } else {
+      link.classList.remove('active');
+    }
+  });
+}
+
+/**
+ * Update active section based on scroll position
+ */
+function updateActiveSection() {
+  const sections = document.querySelectorAll('section[id]');
+  const scrollPosition = getScrollPosition();
   
   sections.forEach(section => {
     const sectionTop = section.offsetTop - CONFIG.scrollOffset - 100;
     const sectionBottom = sectionTop + section.offsetHeight;
-    const scrollPosition = window.pageYOffset;
+    const sectionId = section.getAttribute('id');
     
     if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-      currentSection = section.id;
+      if (state.activeSection !== sectionId) {
+        state.activeSection = sectionId;
+        updateActiveNavLink(`#${sectionId}`);
+      }
     }
   });
-  
-  if (currentSection !== state.currentSection) {
-    state.currentSection = currentSection;
-    
-    navLinks.forEach(link => {
-      const href = link.getAttribute('href');
-      if (href === `#${currentSection}`) {
-        link.classList.add('nav__link--active');
-      } else {
-        link.classList.remove('nav__link--active');
-      }
-    });
-  }
 }
 
 // ============================================================================
-// INTERSECTION OBSERVER
+// FORM VALIDATION & HANDLING
 // ============================================================================
 
 /**
- * Initialize Intersection Observer for animations
+ * Initialize form functionality
  */
-function initIntersectionObserver() {
+function initForms() {
+  const forms = document.querySelectorAll('form');
+  
+  forms.forEach(form => {
+    form.addEventListener('submit', handleFormSubmit);
+    
+    // Real-time validation
+    const inputs = form.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+      input.addEventListener('blur', () => validateField(input));
+      input.addEventListener('input', () => clearFieldError(input));
+    });
+  });
+}
+
+/**
+ * Handle form submission
+ * @param {Event} e - Submit event
+ */
+function handleFormSubmit(e) {
+  e.preventDefault();
+  
+  const form = e.target;
+  const formData = new FormData(form);
+  
+  // Validate all fields
+  const isValid = validateForm(form);
+  
+  if (!isValid) {
+    return;
+  }
+  
+  // Show loading state
+  const submitButton = form.querySelector('button[type="submit"]');
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = 'Sending...';
+  }
+  
+  // Simulate form submission (replace with actual API call)
+  setTimeout(() => {
+    showFormSuccess(form);
+    form.reset();
+    
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = 'Submit';
+    }
+  }, 1500);
+}
+
+/**
+ * Validate entire form
+ * @param {HTMLFormElement} form - Form to validate
+ * @returns {boolean} True if form is valid
+ */
+function validateForm(form) {
+  const inputs = form.querySelectorAll('input[required], textarea[required]');
+  let isValid = true;
+  
+  inputs.forEach(input => {
+    if (!validateField(input)) {
+      isValid = false;
+    }
+  });
+  
+  return isValid;
+}
+
+/**
+ * Validate individual field
+ * @param {HTMLInputElement|HTMLTextAreaElement} field - Field to validate
+ * @returns {boolean} True if field is valid
+ */
+function validateField(field) {
+  const value = field.value.trim();
+  const type = field.type;
+  let errorMessage = '';
+  
+  // Required field check
+  if (field.hasAttribute('required') && !value) {
+    errorMessage = 'This field is required';
+  }
+  // Email validation
+  else if (type === 'email' && value && !CONFIG.emailRegex.test(value)) {
+    errorMessage = 'Please enter a valid email address';
+  }
+  // Phone validation
+  else if (type === 'tel' && value && !CONFIG.phoneRegex.test(value)) {
+    errorMessage = 'Please enter a valid phone number';
+  }
+  // Min length validation
+  else if (field.hasAttribute('minlength')) {
+    const minLength = parseInt(field.getAttribute('minlength'), 10);
+    if (value.length < minLength) {
+      errorMessage = `Minimum ${minLength} characters required`;
+    }
+  }
+  
+  if (errorMessage) {
+    showFieldError(field, errorMessage);
+    return false;
+  }
+  
+  clearFieldError(field);
+  return true;
+}
+
+/**
+ * Show field error
+ * @param {HTMLElement} field - Field element
+ * @param {string} message - Error message
+ */
+function showFieldError(field, message) {
+  const formGroup = field.closest('.form-group') || field.parentElement;
+  if (!formGroup) return;
+  
+  // Remove existing error
+  const existingError = formGroup.querySelector('.error-message');
+  if (existingError) {
+    existingError.remove();
+  }
+  
+  // Add error class
+  formGroup.classList.add('error');
+  field.setAttribute('aria-invalid', 'true');
+  
+  // Create and append error message
+  const errorElement = document.createElement('span');
+  errorElement.className = 'error-message';
+  errorElement.textContent = message;
+  errorElement.setAttribute('role', 'alert');
+  formGroup.appendChild(errorElement);
+}
+
+/**
+ * Clear field error
+ * @param {HTMLElement} field - Field element
+ */
+function clearFieldError(field) {
+  const formGroup = field.closest('.form-group') || field.parentElement;
+  if (!formGroup) return;
+  
+  formGroup.classList.remove('error');
+  field.removeAttribute('aria-invalid');
+  
+  const errorMessage = formGroup.querySelector('.error-message');
+  if (errorMessage) {
+    errorMessage.remove();
+  }
+}
+
+/**
+ * Show form success message
+ * @param {HTMLFormElement} form - Form element
+ */
+function showFormSuccess(form) {
+  const formGroup = form.querySelector('.form-group') || form;
+  
+  // Create success message
+  const successElement = document.createElement('div');
+  successElement.className = 'success-message';
+  successElement.textContent = 'Thank you! Your message has been sent successfully.';
+  successElement.setAttribute('role', 'status');
+  
+  // Insert at the beginning of form
+  form.insertBefore(successElement, form.firstChild);
+  
+  // Remove after 5 seconds
+  setTimeout(() => {
+    successElement.remove();
+  }, 5000);
+}
+
+// ============================================================================
+// INTERSECTION OBSERVER FOR ANIMATIONS
+// ============================================================================
+
+/**
+ * Initialize intersection observer for scroll animations
+ */
+function initScrollAnimations() {
   const observerOptions = {
-    root: null,
-    rootMargin: '0px',
     threshold: CONFIG.observerThreshold,
+    rootMargin: '0px 0px -100px 0px',
   };
   
-  const observer = new IntersectionObserver(handleIntersection, observerOptions);
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animate-in');
+        // Optionally unobserve after animation
+        // observer.unobserve(entry.target);
+      }
+    });
+  }, observerOptions);
   
-  // Observe all sections and animated elements
-  const elementsToObserve = document.querySelectorAll(
-    'section, .feature-card, .cta-section'
-  );
-  
-  elementsToObserve.forEach(element => {
+  // Observe all elements with data-animate attribute
+  const animatedElements = document.querySelectorAll('[data-animate]');
+  animatedElements.forEach(element => {
     observer.observe(element);
-  });
-}
-
-/**
- * Handle intersection observer callback
- * @param {IntersectionObserverEntry[]} entries - Observed entries
- */
-function handleIntersection(entries) {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('is-visible');
-    }
-  });
-}
-
-// ============================================================================
-// EVENT DELEGATION
-// ============================================================================
-
-/**
- * Initialize event delegation for dynamic elements
- */
-function initEventDelegation() {
-  document.addEventListener('click', handleDocumentClick);
-}
-
-/**
- * Handle document-level clicks
- * @param {Event} e - Click event
- */
-function handleDocumentClick(e) {
-  const target = e.target;
-  
-  // Handle CTA button clicks
-  if (target.matches('.cta-button, .cta-button *')) {
-    const button = target.closest('.cta-button');
-    handleCtaClick(button);
-  }
-  
-  // Close mobile menu when clicking outside
-  if (state.isMobileMenuOpen && !target.closest('.nav')) {
-    toggleMobileMenu();
-  }
-}
-
-/**
- * Handle CTA button clicks
- * @param {HTMLElement} button - CTA button element
- */
-function handleCtaClick(button) {
-  if (!button) return;
-  
-  const href = button.getAttribute('href');
-  
-  // Handle internal links
-  if (href && href.startsWith('#')) {
-    const targetElement = document.querySelector(href);
-    if (targetElement) {
-      smoothScrollTo(targetElement);
-    }
-  }
-}
-
-// ============================================================================
-// ERROR HANDLING
-// ============================================================================
-
-/**
- * Global error handler
- */
-function initErrorHandling() {
-  window.addEventListener('error', (_error) => {
-    // Log error in development, send to monitoring in production
-    if (__DEV__) {
-      console.error('Global error:', _error);
-    }
-  });
-  
-  window.addEventListener('unhandledrejection', (event) => {
-    // Log unhandled promise rejections
-    if (__DEV__) {
-      console.error('Unhandled promise rejection:', event.reason);
-    }
   });
 }
 
@@ -377,21 +505,15 @@ function initErrorHandling() {
 function init() {
   try {
     initNavigation();
-    initIntersectionObserver();
-    initEventDelegation();
-    initErrorHandling();
+    initForms();
+    initScrollAnimations();
     
-    // Handle initial hash in URL
-    if (window.location.hash) {
-      const targetElement = document.querySelector(window.location.hash);
-      if (targetElement) {
-        setTimeout(() => {
-          smoothScrollTo(targetElement);
-        }, 100);
-      }
-    }
-  } catch (error) {
-    console.error('Initialization error:', error);
+    // Set initial active section
+    updateActiveSection();
+    
+    console.log('Application initialized successfully');
+  } catch (_error) {
+    console.error('Error initializing application');
   }
 }
 
@@ -406,6 +528,8 @@ if (document.readyState === 'loading') {
 // HOT MODULE REPLACEMENT (Development only)
 // ============================================================================
 
-if (__DEV__ && module.hot) {
-  module.hot.accept();
+if (__DEV__ && import.meta.hot) {
+  import.meta.hot.accept(() => {
+    console.log('HMR: Module updated');
+  });
 }
