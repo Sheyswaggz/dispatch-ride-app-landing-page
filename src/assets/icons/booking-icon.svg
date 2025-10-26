@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-labelledby="booking-icon-title" role="img">
+  <title id="booking-icon-title">Easy Booking</title>
+  <rect x="4" y="6" width="24" height="22" rx="2" ry="2"/>
+  <line x1="4" y1="12" x2="28" y2="12"/>
+  <line x1="10" y1="2" x2="10" y2="6"/>
+  <line x1="22" y1="2" x2="22" y2="6"/>
+  <polyline points="20 18 16 22 12 18"/>
+  <line x1="16" y1="22" x2="16" y2="15"/>
+</svg>
