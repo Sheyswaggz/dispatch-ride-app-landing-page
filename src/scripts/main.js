@@ -1,94 +1,91 @@
 /**
- * Main application entry point
- * Initializes all interactive features and optimizations
- *
- * @module main
- * @requires ./config
- * @requires ./image-optimizer
- *
- * @description
- * Coordinates application initialization including lazy loading and app store links
+ * @fileoverview Main application entry point
+ * Initializes all components and handles application lifecycle
  */
 
+import { initImageOptimizer } from './image-optimizer.js';
+import { initScrollAnimations } from './animations.js';
 import config from './config.js';
-import { initLazyLoading } from './image-optimizer.js';
 
 /**
  * Initialize application
- * Sets up lazy loading and configures app store download buttons
  */
-function initApp() {
-  // Initialize lazy loading for images
-  if (config.isFeatureEnabled('lazyLoading')) {
-    console.warn('[App] Initializing lazy loading...');
-    initLazyLoading();
+function init() {
+  console.log('Initializing Dispatch Ride Landing Page...');
+
+  // Initialize image optimization
+  initImageOptimizer();
+
+  // Initialize features section if enabled
+  if (config.features_section_enabled) {
+    initFeaturesSection();
   }
 
-  // Setup app store buttons
-  setupAppStoreButtons();
-
-  // Add smooth scroll behavior
-  document.documentElement.style.scrollBehavior = 'smooth';
+  console.log('Application initialized successfully');
 }
 
 /**
- * Configure app store download buttons with proper URLs
- * Handles both iOS App Store and Google Play Store links
+ * Initialize features section with scroll animations
  */
-function setupAppStoreButtons() {
-  const appStoreBtn = document.querySelector('.app-store-btn');
-  const playStoreBtn = document.querySelector('.play-store-btn');
+function initFeaturesSection() {
+  try {
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if (appStoreBtn) {
-    appStoreBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const url = config.getAppStoreUrl('ios');
-      if (url) {
-        window.open(url, '_blank', 'noopener,noreferrer');
-      } else {
-        console.warn('[App] iOS App Store URL not configured');
-      }
+    if (prefersReducedMotion) {
+      console.info('[Features] Reduced motion preferred - animations disabled');
+      // Make feature cards visible immediately
+      const featureCards = document.querySelectorAll('.feature-card');
+      featureCards.forEach(card => {
+        card.classList.add('visible');
+        card.style.opacity = '1';
+      });
+      return;
+    }
+
+    // Initialize scroll animations for feature cards
+    const featureCards = document.querySelectorAll('.feature-card');
+    
+    if (featureCards.length > 0) {
+      initScrollAnimations('.feature-card', {
+        animationType: 'fade-in',
+        threshold: 0.1,
+        triggerOnce: true,
+        delay: 0,
+        duration: 600
+      });
+
+      console.info(`[Features] Initialized scroll animations for ${featureCards.length} feature cards`);
+    } else {
+      console.warn('[Features] No feature cards found in DOM');
+    }
+  } catch (error) {
+    console.error('[Features] Failed to initialize features section:', error);
+    // Fallback: make cards visible
+    const featureCards = document.querySelectorAll('.feature-card');
+    featureCards.forEach(card => {
+      card.classList.add('visible');
+      card.style.opacity = '1';
     });
-  }
-
-  if (playStoreBtn) {
-    playStoreBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const url = config.getAppStoreUrl('android');
-      if (url) {
-        window.open(url, '_blank', 'noopener,noreferrer');
-      } else {
-        console.warn('[App] Google Play Store URL not configured');
-      }
-    });
-  }
-}
-
-/**
- * Handle page visibility changes
- * Pauses/resumes animations when page is hidden/visible
- */
-function handleVisibilityChange() {
-  if (document.hidden) {
-    // Pause animations when page is hidden
-    document.body.classList.add('page-hidden');
-  } else {
-    // Resume animations when page is visible
-    document.body.classList.remove('page-hidden');
   }
 }
 
 // Initialize when DOM is ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initApp);
+  document.addEventListener('DOMContentLoaded', init);
 } else {
-  initApp();
+  init();
 }
 
-// Handle page visibility
-document.addEventListener('visibilitychange', handleVisibilityChange);
-
-// Log initialization in development
-if (config.isFeatureEnabled('analytics')) {
-  console.warn('[App] Application initialized successfully');
+// Handle feature flag changes (for development/testing)
+if (typeof window !== 'undefined') {
+  window.toggleFeaturesSection = function(enabled) {
+    config.features_section_enabled = enabled;
+    const featuresSection = document.querySelector('.features-section');
+    
+    if (featuresSection) {
+      featuresSection.style.display = enabled ? '' : 'none';
+      console.info(`[Features] Section ${enabled ? 'enabled' : 'disabled'}`);
+    }
+  };
 }
