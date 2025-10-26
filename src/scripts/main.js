@@ -1,414 +1,411 @@
-'use strict';
-
 /**
- * Main JavaScript Entry Point
- * 
- * Production-ready initialization script for Dispatch Ride Landing Page.
- * Handles DOM initialization, event delegation, and core application setup.
- * 
- * @module main
- * @version 1.0.0
+ * Main JavaScript entry point for Dispatch Ride Landing Page
+ * Handles navigation, smooth scrolling, and interactive features
  */
 
-/**
- * Application state and configuration
- * @private
- */
-const APP_STATE = Object.freeze({
-  initialized: false,
-  startTime: Date.now(),
-  environment: typeof window !== 'undefined' ? 'browser' : 'node',
-});
+// ============================================================================
+// CONFIGURATION & CONSTANTS
+// ============================================================================
 
-/**
- * Logger utility for structured logging
- * @private
- */
-const Logger = {
-  /**
-   * Log info message
-   * @param {string} message - Log message
-   * @param {Object} [context={}] - Additional context
-   */
-  info(message, context = {}) {
-    console.log('[INFO]', message, {
-      timestamp: new Date().toISOString(),
-      ...context,
-    });
-  },
-
-  /**
-   * Log warning message
-   * @param {string} message - Warning message
-   * @param {Object} [context={}] - Additional context
-   */
-  warn(message, context = {}) {
-    console.warn('[WARN]', message, {
-      timestamp: new Date().toISOString(),
-      ...context,
-    });
-  },
-
-  /**
-   * Log error message
-   * @param {string} message - Error message
-   * @param {Error} [error=null] - Error object
-   * @param {Object} [context={}] - Additional context
-   */
-  error(message, error = null, context = {}) {
-    console.error('[ERROR]', message, {
-      timestamp: new Date().toISOString(),
-      error: error ? {
-        message: error.message,
-        stack: error.stack,
-        name: error.name,
-      } : null,
-      ...context,
-    });
-  },
-
-  /**
-   * Log debug message (only in development)
-   * @param {string} message - Debug message
-   * @param {Object} [context={}] - Additional context
-   */
-  debug(message, context = {}) {
-    if (typeof __DEV__ !== 'undefined' && __DEV__) {
-      console.debug('[DEBUG]', message, {
-        timestamp: new Date().toISOString(),
-        ...context,
-      });
-    }
-  },
-};
-
-/**
- * Performance monitoring utility
- * @private
- */
-const Performance = {
-  /**
-   * Mark a performance point
-   * @param {string} name - Mark name
-   */
-  mark(name) {
-    if (typeof performance !== 'undefined' && performance.mark) {
-      try {
-        performance.mark(name);
-      } catch (error) {
-        Logger.debug('Performance mark failed', { name, error: error.message });
-      }
-    }
-  },
-
-  /**
-   * Measure performance between two marks
-   * @param {string} name - Measure name
-   * @param {string} startMark - Start mark name
-   * @param {string} endMark - End mark name
-   * @returns {number|null} Duration in milliseconds
-   */
-  measure(name, startMark, endMark) {
-    if (typeof performance !== 'undefined' && performance.measure) {
-      try {
-        performance.measure(name, startMark, endMark);
-        const measure = performance.getEntriesByName(name)[0];
-        return measure ? measure.duration : null;
-      } catch (error) {
-        Logger.debug('Performance measure failed', { name, error: error.message });
-        return null;
-      }
-    }
-    return null;
-  },
-};
-
-/**
- * DOM utility functions
- * @private
- */
-const DOM = {
-  /**
-   * Safely query selector
-   * @param {string} selector - CSS selector
-   * @param {Element} [context=document] - Context element
-   * @returns {Element|null} Found element or null
-   */
-  query(selector, context = document) {
-    try {
-      return context.querySelector(selector);
-    } catch (error) {
-      Logger.error('Invalid selector', error, { selector });
-      return null;
-    }
-  },
-
-  /**
-   * Safely query all elements
-   * @param {string} selector - CSS selector
-   * @param {Element} [context=document] - Context element
-   * @returns {Element[]} Array of found elements
-   */
-  queryAll(selector, context = document) {
-    try {
-      return Array.from(context.querySelectorAll(selector));
-    } catch (error) {
-      Logger.error('Invalid selector', error, { selector });
-      return [];
-    }
-  },
-
-  /**
-   * Check if DOM is ready
-   * @returns {boolean} True if DOM is ready
-   */
-  isReady() {
-    return document.readyState === 'complete' || document.readyState === 'interactive';
-  },
-};
-
-/**
- * Event delegation handler
- * @private
- */
-const EventHandler = {
-  /**
-   * Registered event listeners for cleanup
-   * @private
-   */
-  _listeners: [],
-
-  /**
-   * Add event listener with delegation support
-   * @param {Element} element - Target element
-   * @param {string} eventType - Event type
-   * @param {string|Function} selectorOrHandler - CSS selector or handler function
-   * @param {Function} [handler=null] - Handler function if selector provided
-   */
-  on(element, eventType, selectorOrHandler, handler = null) {
-    const isDelegated = typeof selectorOrHandler === 'string';
-    const actualHandler = isDelegated ? handler : selectorOrHandler;
-    const selector = isDelegated ? selectorOrHandler : null;
-
-    if (!element || !eventType || !actualHandler) {
-      Logger.error('Invalid event listener parameters', null, {
-        element: !!element,
-        eventType,
-        handler: !!actualHandler,
-      });
-      return;
-    }
-
-    const wrappedHandler = isDelegated
-      ? (event) => {
-          const target = event.target.closest(selector);
-          if (target && element.contains(target)) {
-            actualHandler.call(target, event);
-          }
-        }
-      : actualHandler;
-
-    try {
-      element.addEventListener(eventType, wrappedHandler);
-      this._listeners.push({ element, eventType, handler: wrappedHandler });
-      Logger.debug('Event listener added', { eventType, selector, delegated: isDelegated });
-    } catch (error) {
-      Logger.error('Failed to add event listener', error, { eventType, selector });
-    }
-  },
-
-  /**
-   * Remove all registered event listeners
-   */
-  cleanup() {
-    this._listeners.forEach(({ element, eventType, handler }) => {
-      try {
-        element.removeEventListener(eventType, handler);
-      } catch (error) {
-        Logger.debug('Failed to remove event listener', { error: error.message });
-      }
-    });
-    this._listeners = [];
-    Logger.debug('Event listeners cleaned up');
-  },
-};
-
-/**
- * Initialize application
- * @private
- */
-function initializeApp() {
-  Performance.mark('app-init-start');
-
-  try {
-    Logger.info('Initializing Dispatch Ride Landing Page', {
-      environment: APP_STATE.environment,
-      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'N/A',
-    });
-
-    // Verify DOM is ready
-    if (!DOM.isReady()) {
-      Logger.warn('DOM not ready during initialization');
-    }
-
-    // Setup global error handler
-    setupErrorHandling();
-
-    // Initialize core features
-    initializeFeatures();
-
-    // Mark initialization complete
-    Object.defineProperty(APP_STATE, 'initialized', {
-      value: true,
-      writable: false,
-    });
-
-    Performance.mark('app-init-end');
-    const duration = Performance.measure('app-init', 'app-init-start', 'app-init-end');
-
-    Logger.info('Application initialized successfully', {
-      duration: duration ? `${duration.toFixed(2)}ms` : 'N/A',
-      timestamp: new Date().toISOString(),
-    });
-  } catch (error) {
-    Logger.error('Application initialization failed', error);
-    throw error;
-  }
-}
-
-/**
- * Setup global error handling
- * @private
- */
-function setupErrorHandling() {
-  if (typeof window === 'undefined') {
-    return;
-  }
-
-  // Handle uncaught errors
-  window.addEventListener('error', (event) => {
-    Logger.error('Uncaught error', event.error, {
-      message: event.message,
-      filename: event.filename,
-      lineno: event.lineno,
-      colno: event.colno,
-    });
-  });
-
-  // Handle unhandled promise rejections
-  window.addEventListener('unhandledrejection', (event) => {
-    Logger.error('Unhandled promise rejection', event.reason, {
-      promise: event.promise,
-    });
-  });
-
-  Logger.debug('Global error handling configured');
-}
-
-/**
- * Initialize core application features
- * @private
- */
-function initializeFeatures() {
-  Logger.debug('Initializing core features');
-
-  // Feature initialization will be added here as the application grows
-  // This provides a clean extension point for future functionality
-
-  // Example: Initialize smooth scrolling
-  initializeSmoothScroll();
-
-  Logger.debug('Core features initialized');
-}
-
-/**
- * Initialize smooth scrolling for anchor links
- * @private
- */
-function initializeSmoothScroll() {
-  if (typeof document === 'undefined') {
-    return;
-  }
-
-  EventHandler.on(document, 'click', 'a[href^="#"]', (event) => {
-    const href = event.currentTarget.getAttribute('href');
-    
-    if (!href || href === '#') {
-      return;
-    }
-
-    const targetId = href.slice(1);
-    const targetElement = document.getElementById(targetId);
-
-    if (targetElement) {
-      event.preventDefault();
-      
-      try {
-        targetElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        });
-        
-        Logger.debug('Smooth scroll triggered', { targetId });
-      } catch (error) {
-        // Fallback for browsers that don't support smooth scrolling
-        targetElement.scrollIntoView();
-        Logger.debug('Fallback scroll used', { targetId });
-      }
-    }
-  });
-
-  Logger.debug('Smooth scroll initialized');
-}
-
-/**
- * Cleanup function for application teardown
- * @private
- */
-function cleanup() {
-  Logger.info('Cleaning up application resources');
+const CONFIG = {
+  // Scroll behavior
+  scrollOffset: 80, // Height of fixed header
+  scrollDuration: 800,
   
-  try {
-    EventHandler.cleanup();
-    Logger.info('Application cleanup completed');
-  } catch (error) {
-    Logger.error('Cleanup failed', error);
+  // Intersection Observer thresholds
+  observerThreshold: 0.1,
+  
+  // Animation delays
+  animationDelay: 100,
+  
+  // Breakpoints
+  mobileBreakpoint: 768,
+};
+
+// ============================================================================
+// STATE MANAGEMENT
+// ============================================================================
+
+const state = {
+  isMobileMenuOpen: false,
+  currentSection: null,
+  isScrolling: false,
+};
+
+// Development mode logging
+if (__DEV__) {
+  console.warn('Running in development mode');
+}
+
+// ============================================================================
+// UTILITY FUNCTIONS
+// ============================================================================
+
+/**
+ * Debounce function to limit function execution rate
+ * @param {Function} func - Function to debounce
+ * @param {number} wait - Wait time in milliseconds
+ * @returns {Function} Debounced function
+ */
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+/**
+ * Throttle function to limit function execution rate
+ * @param {Function} func - Function to throttle
+ * @param {number} limit - Time limit in milliseconds
+ * @returns {Function} Throttled function
+ */
+function throttle(func, limit) {
+  let inThrottle;
+  return function executedFunction(...args) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => {
+        inThrottle = false;
+      }, limit);
+    }
+  };
+}
+
+if (__DEV__) {
+  console.warn('Utility functions loaded');
+}
+
+// ============================================================================
+// SMOOTH SCROLLING
+// ============================================================================
+
+/**
+ * Smooth scroll to target element
+ * @param {HTMLElement} target - Target element to scroll to
+ */
+function smoothScrollTo(target) {
+  if (!target) return;
+  
+  const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
+  const startPosition = window.pageYOffset;
+  const distance = targetPosition - startPosition - CONFIG.scrollOffset;
+  const startTime = performance.now();
+  
+  function animation(currentTime) {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / CONFIG.scrollDuration, 1);
+    
+    // Easing function (ease-in-out)
+    const ease = progress < 0.5
+      ? 2 * progress * progress
+      : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+    
+    window.scrollTo(0, startPosition + distance * ease);
+    
+    if (progress < 1) {
+      requestAnimationFrame(animation);
+    } else {
+      state.isScrolling = false;
+    }
+  }
+  
+  state.isScrolling = true;
+  requestAnimationFrame(animation);
+}
+
+// ============================================================================
+// NAVIGATION
+// ============================================================================
+
+/**
+ * Initialize navigation functionality
+ */
+function initNavigation() {
+  const nav = document.querySelector('.nav');
+  const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+  const navLinks = document.querySelectorAll('.nav__link');
+  
+  // Mobile menu toggle
+  if (mobileMenuToggle) {
+    mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+  }
+  
+  // Smooth scroll for navigation links
+  navLinks.forEach(link => {
+    link.addEventListener('click', handleNavLinkClick);
+  });
+  
+  // Sticky navigation on scroll
+  window.addEventListener('scroll', throttle(handleScroll, 100));
+  
+  // Close mobile menu on window resize
+  window.addEventListener('resize', debounce(handleResize, 250));
+}
+
+/**
+ * Toggle mobile menu
+ */
+function toggleMobileMenu() {
+  state.isMobileMenuOpen = !state.isMobileMenuOpen;
+  const nav = document.querySelector('.nav');
+  const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+  
+  if (nav) {
+    nav.classList.toggle('nav--open', state.isMobileMenuOpen);
+  }
+  
+  if (mobileMenuToggle) {
+    mobileMenuToggle.setAttribute('aria-expanded', state.isMobileMenuOpen);
+  }
+  
+  // Prevent body scroll when menu is open
+  document.body.style.overflow = state.isMobileMenuOpen ? 'hidden' : '';
+}
+
+/**
+ * Handle navigation link clicks
+ * @param {Event} e - Click event
+ */
+function handleNavLinkClick(e) {
+  const href = e.currentTarget.getAttribute('href');
+  
+  // Only handle internal links
+  if (!href || !href.startsWith('#')) return;
+  
+  e.preventDefault();
+  
+  const targetId = href.substring(1);
+  const targetElement = document.getElementById(targetId);
+  
+  if (Boolean(targetElement)) {
+    smoothScrollTo(targetElement);
+    
+    if (Boolean(state.isMobileMenuOpen)) {
+      toggleMobileMenu();
+    }
+    
+    // Update URL without triggering scroll
+    history.pushState(null, '', href);
   }
 }
 
 /**
- * Main entry point
- * Initializes the application when DOM is ready
+ * Handle scroll events
  */
-function main() {
-  if (typeof document === 'undefined') {
-    Logger.warn('Document not available, skipping initialization');
-    return;
-  }
-
-  if (DOM.isReady()) {
-    initializeApp();
+function handleScroll() {
+  const nav = document.querySelector('.nav');
+  if (!nav) return;
+  
+  const scrollPosition = window.pageYOffset;
+  
+  // Add sticky class when scrolled past header
+  if (scrollPosition > 100) {
+    nav.classList.add('nav--sticky');
   } else {
-    document.addEventListener('DOMContentLoaded', () => {
-      initializeApp();
-    });
+    nav.classList.remove('nav--sticky');
   }
+  
+  // Update active navigation link
+  updateActiveNavLink();
+}
 
-  // Setup cleanup on page unload
-  if (typeof window !== 'undefined') {
-    window.addEventListener('beforeunload', cleanup);
+/**
+ * Handle window resize
+ */
+function handleResize() {
+  if (window.innerWidth > CONFIG.mobileBreakpoint && state.isMobileMenuOpen) {
+    toggleMobileMenu();
   }
 }
 
-// Execute main function
-main();
+/**
+ * Update active navigation link based on scroll position
+ */
+function updateActiveNavLink() {
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav__link');
+  
+  let currentSection = null;
+  
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - CONFIG.scrollOffset - 100;
+    const sectionBottom = sectionTop + section.offsetHeight;
+    const scrollPosition = window.pageYOffset;
+    
+    if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+      currentSection = section.id;
+    }
+  });
+  
+  if (currentSection !== state.currentSection) {
+    state.currentSection = currentSection;
+    
+    navLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      if (href === `#${currentSection}`) {
+        link.classList.add('nav__link--active');
+      } else {
+        link.classList.remove('nav__link--active');
+      }
+    });
+  }
+}
 
-// Export for testing and module usage
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    Logger,
-    Performance,
-    DOM,
-    EventHandler,
+// ============================================================================
+// INTERSECTION OBSERVER
+// ============================================================================
+
+/**
+ * Initialize Intersection Observer for animations
+ */
+function initIntersectionObserver() {
+  const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: CONFIG.observerThreshold,
   };
+  
+  const observer = new IntersectionObserver(handleIntersection, observerOptions);
+  
+  // Observe all sections and animated elements
+  const elementsToObserve = document.querySelectorAll(
+    'section, .feature-card, .cta-section'
+  );
+  
+  elementsToObserve.forEach(element => {
+    observer.observe(element);
+  });
+}
+
+/**
+ * Handle intersection observer callback
+ * @param {IntersectionObserverEntry[]} entries - Observed entries
+ */
+function handleIntersection(entries) {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('is-visible');
+    }
+  });
+}
+
+// ============================================================================
+// EVENT DELEGATION
+// ============================================================================
+
+/**
+ * Initialize event delegation for dynamic elements
+ */
+function initEventDelegation() {
+  document.addEventListener('click', handleDocumentClick);
+}
+
+/**
+ * Handle document-level clicks
+ * @param {Event} e - Click event
+ */
+function handleDocumentClick(e) {
+  const target = e.target;
+  
+  // Handle CTA button clicks
+  if (target.matches('.cta-button, .cta-button *')) {
+    const button = target.closest('.cta-button');
+    handleCtaClick(button);
+  }
+  
+  // Close mobile menu when clicking outside
+  if (state.isMobileMenuOpen && !target.closest('.nav')) {
+    toggleMobileMenu();
+  }
+}
+
+/**
+ * Handle CTA button clicks
+ * @param {HTMLElement} button - CTA button element
+ */
+function handleCtaClick(button) {
+  if (!button) return;
+  
+  const href = button.getAttribute('href');
+  
+  // Handle internal links
+  if (href && href.startsWith('#')) {
+    const targetElement = document.querySelector(href);
+    if (targetElement) {
+      smoothScrollTo(targetElement);
+    }
+  }
+}
+
+// ============================================================================
+// ERROR HANDLING
+// ============================================================================
+
+/**
+ * Global error handler
+ */
+function initErrorHandling() {
+  window.addEventListener('error', (_error) => {
+    // Log error in development, send to monitoring in production
+    if (__DEV__) {
+      console.error('Global error:', _error);
+    }
+  });
+  
+  window.addEventListener('unhandledrejection', (event) => {
+    // Log unhandled promise rejections
+    if (__DEV__) {
+      console.error('Unhandled promise rejection:', event.reason);
+    }
+  });
+}
+
+// ============================================================================
+// INITIALIZATION
+// ============================================================================
+
+/**
+ * Initialize all functionality when DOM is ready
+ */
+function init() {
+  try {
+    initNavigation();
+    initIntersectionObserver();
+    initEventDelegation();
+    initErrorHandling();
+    
+    // Handle initial hash in URL
+    if (window.location.hash) {
+      const targetElement = document.querySelector(window.location.hash);
+      if (targetElement) {
+        setTimeout(() => {
+          smoothScrollTo(targetElement);
+        }, 100);
+      }
+    }
+  } catch (error) {
+    console.error('Initialization error:', error);
+  }
+}
+
+// Wait for DOM to be ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+
+// ============================================================================
+// HOT MODULE REPLACEMENT (Development only)
+// ============================================================================
+
+if (__DEV__ && module.hot) {
+  module.hot.accept();
 }
