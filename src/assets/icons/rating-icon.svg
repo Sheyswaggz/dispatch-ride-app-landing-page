@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-labelledby="rating-icon-title" role="img">
+  <title id="rating-icon-title">Driver Ratings</title>
+  <circle cx="16" cy="10" r="4"/>
+  <path d="M24 28c0-4.418-3.582-8-8-8s-8 3.582-8 8"/>
+  <path d="M16 2l1.545 4.755h5l-4.045 2.94 1.545 4.755L16 11.51l-4.045 2.94 1.545-4.755-4.045-2.94h5z"/>
+</svg>

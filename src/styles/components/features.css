@@ -1,0 +1,444 @@
+/**
+ * Features Section Styles
+ * 
+ * Implements responsive grid layout for feature cards with animations.
+ * Uses BEM naming convention and CSS custom properties for theming.
+ * Supports scroll-triggered animations and accessibility features.
+ * 
+ * Layout:
+ * - Mobile: 1 column
+ * - Tablet: 2 columns
+ * - Desktop: 4 columns
+ */
+
+/* ============================================
+   FEATURES SECTION BASE STYLES
+   ============================================ */
+
+.features {
+  padding-block: var(--space-section-md);
+  background-color: var(--color-surface-secondary);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Section container */
+.features__container {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-padding-mobile);
+}
+
+/* Section header */
+.features__header {
+  text-align: center;
+  margin-block-end: var(--space-12);
+}
+
+.features__title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text-primary);
+  margin-block-end: var(--space-4);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.features__subtitle {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  max-width: 60ch;
+  margin-inline: auto;
+  line-height: var(--line-height-relaxed);
+}
+
+/* ============================================
+   FEATURES GRID LAYOUT
+   ============================================ */
+
+.features__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  margin-block-start: var(--space-8);
+}
+
+/* ============================================
+   FEATURE CARD STYLES
+   ============================================ */
+
+.features__card {
+  background-color: var(--color-surface-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-base),
+              box-shadow var(--transition-base),
+              background-color var(--transition-base);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  border: 1px solid var(--color-border-light);
+  
+  /* Prepare for animation */
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* Animated state - applied by JavaScript */
+.features__card.is-visible {
+  animation: feature-fade-in var(--transition-slow) var(--ease-out) forwards;
+}
+
+/* Hover effects */
+.features__card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-primary-200);
+}
+
+/* Focus styles for accessibility */
+.features__card:focus-within {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   FEATURE CARD COMPONENTS
+   ============================================ */
+
+/* Icon container */
+.features__icon {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, 
+                             var(--color-primary-100), 
+                             var(--color-primary-50));
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+  transition: transform var(--transition-base),
+              background var(--transition-base);
+}
+
+.features__card:hover .features__icon {
+  transform: scale(1.05) rotate(2deg);
+  background: linear-gradient(135deg, 
+                             var(--color-primary-200), 
+                             var(--color-primary-100));
+}
+
+/* SVG icon styling */
+.features__icon svg {
+  width: 32px;
+  height: 32px;
+  color: var(--color-primary-600);
+  transition: color var(--transition-base);
+}
+
+.features__card:hover .features__icon svg {
+  color: var(--color-primary-700);
+}
+
+/* Feature content */
+.features__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Feature title */
+.features__card-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: var(--line-height-snug);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+/* Feature description */
+.features__description {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+}
+
+/* ============================================
+   ANIMATION KEYFRAMES
+   ============================================ */
+
+@keyframes feature-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes feature-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Staggered animation delays for cards */
+.features__card:nth-child(1).is-visible {
+  animation-delay: 0ms;
+}
+
+.features__card:nth-child(2).is-visible {
+  animation-delay: 100ms;
+}
+
+.features__card:nth-child(3).is-visible {
+  animation-delay: 200ms;
+}
+
+.features__card:nth-child(4).is-visible {
+  animation-delay: 300ms;
+}
+
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+   ============================================ */
+
+/* Tablet: 2 columns */
+@media (min-width: 768px) {
+  .features {
+    padding-block: var(--space-section-lg);
+  }
+  
+  .features__container {
+    padding-inline: var(--container-padding-tablet);
+  }
+  
+  .features__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-8);
+  }
+  
+  .features__header {
+    margin-block-end: var(--space-16);
+  }
+  
+  .features__card {
+    padding: var(--space-10);
+  }
+  
+  .features__icon {
+    width: 72px;
+    height: 72px;
+  }
+  
+  .features__icon svg {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Desktop: 4 columns */
+@media (min-width: 1024px) {
+  .features {
+    padding-block: var(--space-section-xl);
+  }
+  
+  .features__container {
+    padding-inline: var(--container-padding-desktop);
+  }
+  
+  .features__grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-8);
+  }
+  
+  .features__card {
+    padding: var(--space-8);
+  }
+  
+  .features__icon {
+    width: 64px;
+    height: 64px;
+  }
+  
+  .features__icon svg {
+    width: 32px;
+    height: 32px;
+  }
+  
+  /* Enhanced hover effects on desktop */
+  .features__card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, 
+                               var(--color-primary-50), 
+                               transparent);
+    opacity: 0;
+    transition: opacity var(--transition-base);
+    pointer-events: none;
+  }
+  
+  .features__card:hover::before {
+    opacity: 1;
+  }
+}
+
+/* Wide screens: Optimize spacing */
+@media (min-width: 1280px) {
+  .features__grid {
+    gap: var(--space-10);
+  }
+  
+  .features__card {
+    padding: var(--space-10);
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY ENHANCEMENTS
+   ============================================ */
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .features__card {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1;
+    transform: none;
+  }
+  
+  .features__card.is-visible {
+    animation: none;
+  }
+  
+  .features__card:hover {
+    transform: none;
+  }
+  
+  .features__icon,
+  .features__icon svg {
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .features__card {
+    border-width: 2px;
+    border-color: var(--color-border-strong);
+  }
+  
+  .features__card:hover {
+    border-color: var(--color-primary-600);
+  }
+  
+  .features__icon {
+    border: 2px solid var(--color-primary-600);
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .features {
+    background-color: var(--color-surface-tertiary);
+  }
+  
+  .features__card {
+    background-color: var(--color-surface-secondary);
+    border-color: var(--color-border-medium);
+  }
+  
+  .features__card:hover {
+    border-color: var(--color-primary-400);
+  }
+  
+  .features__icon {
+    background: linear-gradient(135deg, 
+                               var(--color-primary-900), 
+                               var(--color-primary-800));
+  }
+  
+  .features__card:hover .features__icon {
+    background: linear-gradient(135deg, 
+                               var(--color-primary-800), 
+                               var(--color-primary-700));
+  }
+  
+  .features__icon svg {
+    color: var(--color-primary-400);
+  }
+  
+  .features__card:hover .features__icon svg {
+    color: var(--color-primary-300);
+  }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+  .features {
+    padding-block: var(--space-8);
+    background-color: transparent;
+  }
+  
+  .features__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+  
+  .features__card {
+    box-shadow: none;
+    border: 1px solid #000;
+    page-break-inside: avoid;
+    opacity: 1;
+    transform: none;
+  }
+  
+  .features__card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  
+  .features__icon {
+    background: transparent;
+    border: 1px solid #000;
+  }
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+/* Hide feature section when feature flag is off */
+.features.is-hidden {
+  display: none;
+}
+
+/* Loading state */
+.features.is-loading .features__card {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Error state */
+.features.has-error .features__card {
+  opacity: 0.3;
+  filter: grayscale(100%);
+}
