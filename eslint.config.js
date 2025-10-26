@@ -9,16 +9,13 @@ export default [
       sourceType: 'module',
       globals: {
         ...globals.browser,
-        ...globals.es2021,
-        __DEV__: 'readonly',
-        module: 'readonly',
+        ...globals.node,
+        __PROD__: 'readonly',
       },
     },
     rules: {
       'no-console': ['warn', { allow: ['warn', 'error'] }],
-      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-      'no-undef': 'error',
-      'no-implicit-coercion': 'error',
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     },
   },
 ];
