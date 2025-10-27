@@ -1,11 +1,27 @@
-/* Main Stylesheet - Dispatch Ride Landing Page */
+/* Main Stylesheet - Dispatch Ride App Landing Page */
 
-/* Import order: Reset → Variables → Base → Layout → Components → Utilities */
+/* ============================================
+   IMPORTS - Foundation & Reset
+   ============================================ */
 @import './reset.css';
 @import './variables.css';
+
+/* ============================================
+   IMPORTS - Base & Layout
+   ============================================ */
 @import './base.css';
 @import './layout.css';
+
+/* ============================================
+   IMPORTS - Components
+   ============================================ */
 @import './components/buttons.css';
 @import './components/hero.css';
 @import './components/features.css';
+@import './components/how-it-works.css';
+@import './components/footer.css';
+
+/* ============================================
+   IMPORTS - Utilities
+   ============================================ */
 @import './utilities/animations.css';

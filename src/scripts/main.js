@@ -1,43 +1,94 @@
 /**
  * Main application entry point
- * Initializes all features and handles application lifecycle
+ * Initializes all components and handles application lifecycle
  */
 
+import { config } from './config.js';
+import { initAnimations } from './animations.js';
 import { initImageOptimizer } from './image-optimizer.js';
-import { initScrollAnimations } from './animations.js';
-import { APP_CONFIG } from './config.js';
 
 /**
- * Initialize all application features
+ * Initialize the application
  */
 function initApp() {
-  // Initialize image optimization
+  // Initialize animations
+  initAnimations();
+
+  // Initialize image optimizer
   initImageOptimizer();
 
-  // Initialize scroll animations
-  initScrollAnimations();
+  // Initialize smooth scrolling for navigation links
+  initSmoothScrolling();
 
-  // Log initialization
-  if (process.env.NODE_ENV === 'development') {
-    console.log('App initialized successfully');
-    console.log('Image optimization config:', APP_CONFIG.imageOptimization);
+  // Initialize mobile menu
+  initMobileMenu();
+
+  // Initialize footer year
+  initFooterYear();
+
+  // Log initialization if in development mode
+  if (config.isDevelopment) {
+    console.log('Dispatch Ride App initialized');
   }
 }
 
-// Initialize when DOM is ready
+/**
+ * Initialize smooth scrolling for anchor links
+ */
+function initSmoothScrolling() {
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      const href = this.getAttribute('href');
+      if (href === '#') return;
+
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }
+    });
+  });
+}
+
+/**
+ * Initialize mobile menu functionality
+ */
+function initMobileMenu() {
+  const menuToggle = document.querySelector('.mobile-menu-toggle');
+  const nav = document.querySelector('.nav');
+
+  if (menuToggle && nav) {
+    menuToggle.addEventListener('click', () => {
+      nav.classList.toggle('active');
+      menuToggle.classList.toggle('active');
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!nav.contains(e.target) && !menuToggle.contains(e.target)) {
+        nav.classList.remove('active');
+        menuToggle.classList.remove('active');
+      }
+    });
+  }
+}
+
+/**
+ * Initialize footer year
+ */
+function initFooterYear() {
+  const yearElement = document.getElementById('current-year');
+  if (yearElement) {
+    yearElement.textContent = new Date().getFullYear().toString();
+  }
+}
+
+// Initialize app when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initApp);
 } else {
   initApp();
 }
-
-// Handle page visibility changes for performance optimization
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) {
-    // Pause animations or heavy operations when page is hidden
-    console.log('Page hidden - pausing operations');
-  } else {
-    // Resume operations when page is visible
-    console.log('Page visible - resuming operations');
-  }
-});

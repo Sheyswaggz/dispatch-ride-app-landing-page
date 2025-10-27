@@ -1,0 +1,521 @@
+/**
+ * How It Works Section Styles
+ * 
+ * Implements responsive step-by-step layout with visual connectors for the
+ * "How It Works" section of the Dispatch Ride App landing page.
+ * 
+ * Features:
+ * - BEM naming convention for maintainability
+ * - Mobile-first responsive design
+ * - CSS counters for automatic step numbering
+ * - Visual connectors between steps (desktop only)
+ * - Accessible focus states
+ * - Smooth transitions and animations
+ * - Fluid typography and spacing
+ * 
+ * Browser Support: Modern browsers (Chrome, Firefox, Safari, Edge)
+ * Accessibility: WCAG 2.1 AA compliant
+ */
+
+/* ============================================
+   HOW IT WORKS SECTION - BASE STYLES
+   ============================================ */
+
+.how-it-works {
+  /* Section spacing */
+  padding-block: var(--space-fluid-xl);
+  padding-inline: var(--container-padding-mobile);
+  
+  /* Background */
+  background-color: var(--color-background-alt);
+  
+  /* Positioning context for connectors */
+  position: relative;
+  
+  /* Smooth transitions */
+  transition: background-color var(--transition-base);
+}
+
+/* Section header */
+.how-it-works__header {
+  /* Center alignment */
+  text-align: center;
+  
+  /* Spacing */
+  margin-block-end: var(--space-fluid-lg);
+  
+  /* Max width for readability */
+  max-width: 800px;
+  margin-inline: auto;
+}
+
+.how-it-works__title {
+  /* Typography */
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+  
+  /* Spacing */
+  margin-block-end: var(--space-4);
+  
+  /* Text balance for better wrapping */
+  text-wrap: balance;
+}
+
+.how-it-works__description {
+  /* Typography */
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-secondary);
+  
+  /* Max width for readability */
+  max-width: 600px;
+  margin-inline: auto;
+}
+
+/* ============================================
+   STEPS CONTAINER
+   ============================================ */
+
+.how-it-works__steps {
+  /* Reset list styles */
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  
+  /* Flexbox layout for mobile (vertical) */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-fluid-md);
+  
+  /* Counter for step numbers */
+  counter-reset: step-counter;
+  
+  /* Max width and centering */
+  max-width: var(--container-max);
+  margin-inline: auto;
+}
+
+/* ============================================
+   INDIVIDUAL STEP STYLES
+   ============================================ */
+
+.how-it-works__step {
+  /* Increment counter */
+  counter-increment: step-counter;
+  
+  /* Positioning context */
+  position: relative;
+  
+  /* Flexbox for content alignment */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  
+  /* Spacing */
+  padding: var(--space-6);
+  
+  /* Background and border */
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  
+  /* Shadow for depth */
+  box-shadow: var(--shadow-sm);
+  
+  /* Smooth transitions */
+  transition: transform var(--transition-base),
+              box-shadow var(--transition-base),
+              background-color var(--transition-base);
+}
+
+/* Hover state for interactive feel */
+.how-it-works__step:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Focus state for keyboard navigation */
+.how-it-works__step:focus-within {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+/* ============================================
+   STEP NUMBER CIRCLE
+   ============================================ */
+
+.how-it-works__step-number {
+  /* Circle dimensions */
+  width: 64px;
+  height: 64px;
+  
+  /* Flexbox for centering content */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  /* Circle shape */
+  border-radius: var(--radius-full);
+  
+  /* Background gradient */
+  background: linear-gradient(135deg, 
+                             var(--color-primary-500), 
+                             var(--color-primary-600));
+  
+  /* Shadow for depth */
+  box-shadow: var(--shadow-primary);
+  
+  /* Spacing */
+  margin-block-end: var(--space-5);
+  
+  /* Positioning for connector */
+  position: relative;
+  z-index: 2;
+  
+  /* Smooth transitions */
+  transition: transform var(--transition-base),
+              box-shadow var(--transition-base);
+}
+
+/* Counter content using CSS counter */
+.how-it-works__step-number::before {
+  content: counter(step-counter);
+  
+  /* Typography */
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-inverse);
+  line-height: 1;
+}
+
+/* Hover effect on step number */
+.how-it-works__step:hover .how-it-works__step-number {
+  transform: scale(1.1);
+  box-shadow: 0 8px 20px -4px var(--color-primary-500);
+}
+
+/* ============================================
+   STEP CONTENT
+   ============================================ */
+
+.how-it-works__step-content {
+  /* Full width */
+  width: 100%;
+}
+
+.how-it-works__step-title {
+  /* Typography */
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-snug);
+  color: var(--color-text-primary);
+  
+  /* Spacing */
+  margin-block-end: var(--space-3);
+  
+  /* Text balance */
+  text-wrap: balance;
+}
+
+.how-it-works__step-description {
+  /* Typography */
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-secondary);
+  
+  /* Max width for readability */
+  max-width: 400px;
+  margin-inline: auto;
+}
+
+/* ============================================
+   STEP ICON (OPTIONAL)
+   ============================================ */
+
+.how-it-works__step-icon {
+  /* Icon dimensions */
+  width: 48px;
+  height: 48px;
+  
+  /* Spacing */
+  margin-block-end: var(--space-4);
+  
+  /* Color */
+  color: var(--color-primary-500);
+  
+  /* Smooth transitions */
+  transition: transform var(--transition-base),
+              color var(--transition-base);
+}
+
+.how-it-works__step:hover .how-it-works__step-icon {
+  transform: scale(1.1);
+  color: var(--color-primary-600);
+}
+
+/* ============================================
+   VISUAL CONNECTORS (DESKTOP ONLY)
+   ============================================ */
+
+/* Connector line between steps */
+.how-it-works__step::after {
+  /* Hidden on mobile */
+  content: none;
+}
+
+/* ============================================
+   TABLET BREAKPOINT (768px+)
+   ============================================ */
+
+@media (min-width: 768px) {
+  .how-it-works {
+    padding-inline: var(--container-padding-tablet);
+  }
+  
+  .how-it-works__header {
+    margin-block-end: var(--space-fluid-xl);
+  }
+  
+  .how-it-works__title {
+    font-size: var(--font-size-4xl);
+  }
+  
+  .how-it-works__steps {
+    /* Two columns on tablet */
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-8);
+  }
+  
+  .how-it-works__step {
+    padding: var(--space-8);
+  }
+  
+  .how-it-works__step-number {
+    width: 72px;
+    height: 72px;
+  }
+  
+  .how-it-works__step-number::before {
+    font-size: var(--font-size-3xl);
+  }
+}
+
+/* ============================================
+   DESKTOP BREAKPOINT (1024px+)
+   ============================================ */
+
+@media (min-width: 1024px) {
+  .how-it-works {
+    padding-inline: var(--container-padding-desktop);
+  }
+  
+  .how-it-works__steps {
+    /* Horizontal layout on desktop */
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: var(--space-4);
+  }
+  
+  .how-it-works__step {
+    /* Equal width for all steps */
+    flex: 1;
+    
+    /* Minimum width to prevent squishing */
+    min-width: 0;
+  }
+  
+  /* Visual connector line between steps */
+  .how-it-works__step:not(:last-child)::after {
+    content: '';
+    
+    /* Positioning */
+    position: absolute;
+    top: 32px; /* Align with step number center */
+    left: 100%;
+    
+    /* Line dimensions */
+    width: var(--space-4);
+    height: 2px;
+    
+    /* Line style */
+    background: linear-gradient(90deg, 
+                               var(--color-primary-300), 
+                               var(--color-primary-200));
+    
+    /* Z-index below step number */
+    z-index: 1;
+    
+    /* Smooth transitions */
+    transition: background var(--transition-base);
+  }
+  
+  /* Animated connector on hover */
+  .how-it-works__step:hover::after {
+    background: linear-gradient(90deg, 
+                               var(--color-primary-500), 
+                               var(--color-primary-400));
+  }
+  
+  /* Larger step numbers on desktop */
+  .how-it-works__step-number {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .how-it-works__step-description {
+    max-width: none;
+  }
+}
+
+/* ============================================
+   WIDE DESKTOP BREAKPOINT (1440px+)
+   ============================================ */
+
+@media (min-width: 1440px) {
+  .how-it-works__steps {
+    gap: var(--space-8);
+  }
+  
+  .how-it-works__step {
+    padding: var(--space-10);
+  }
+  
+  /* Longer connector lines on wide screens */
+  .how-it-works__step:not(:last-child)::after {
+    width: var(--space-8);
+  }
+}
+
+/* ============================================
+   ANIMATION UTILITIES
+   ============================================ */
+
+/* Fade-in animation for steps */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apply animation when steps are visible */
+.how-it-works__step {
+  animation: fade-in-up var(--transition-slow) ease-out;
+  animation-fill-mode: both;
+}
+
+/* Stagger animation delays */
+.how-it-works__step:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+.how-it-works__step:nth-child(2) {
+  animation-delay: 100ms;
+}
+
+.how-it-works__step:nth-child(3) {
+  animation-delay: 200ms;
+}
+
+.how-it-works__step:nth-child(4) {
+  animation-delay: 300ms;
+}
+
+/* ============================================
+   REDUCED MOTION SUPPORT
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .how-it-works__step {
+    animation: none;
+  }
+  
+  .how-it-works__step:hover {
+    transform: none;
+  }
+  
+  .how-it-works__step:hover .how-it-works__step-number {
+    transform: none;
+  }
+  
+  .how-it-works__step:hover .how-it-works__step-icon {
+    transform: none;
+  }
+}
+
+/* ============================================
+   HIGH CONTRAST MODE SUPPORT
+   ============================================ */
+
+@media (prefers-contrast: high) {
+  .how-it-works__step {
+    border: 2px solid var(--color-border);
+  }
+  
+  .how-it-works__step-number {
+    border: 2px solid var(--color-text-inverse);
+  }
+  
+  .how-it-works__step:not(:last-child)::after {
+    height: 3px;
+    background: var(--color-border);
+  }
+}
+
+/* ============================================
+   DARK MODE SUPPORT
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+  .how-it-works {
+    background-color: var(--color-background);
+  }
+  
+  .how-it-works__step {
+    background-color: var(--color-surface-elevated);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .how-it-works__step:hover {
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+  .how-it-works {
+    padding-block: var(--space-8);
+    background-color: transparent;
+  }
+  
+  .how-it-works__steps {
+    display: block;
+  }
+  
+  .how-it-works__step {
+    page-break-inside: avoid;
+    margin-block-end: var(--space-6);
+    box-shadow: none;
+    border: 1px solid var(--color-border);
+  }
+  
+  .how-it-works__step::after {
+    display: none;
+  }
+  
+  .how-it-works__step-number {
+    box-shadow: none;
+    border: 2px solid var(--color-primary-500);
+  }
+}
